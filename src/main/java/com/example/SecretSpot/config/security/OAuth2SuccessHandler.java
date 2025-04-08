@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -31,17 +32,29 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 첫 로그인 시 DB에 저장
         String name = oAuth2User.getAttribute("name");
         String picture = oAuth2User.getAttribute("picture");
-//        User user = userRepository.findByEmail(email)
-//                .orElseGet(() -> userRepository.save(User.builder().name(name).email(email)
-//                        .picture(picture).role(Role.ROLE_USER)));
+        String redirectUri;
 
-        // 토큰 파싱용
-        String redirectUri = UriComponentsBuilder
-                .fromUriString("http://localhost:4200/oauth2/redirect")
-                .queryParam("accessToken", accessToken)
-                .queryParam("refreshToken", refreshToken)
-                .build()
-                .toUriString();
+//        if (userRepository.findByEmail(email)) { // 첫 로그인
+        if (true) {
+            redirectUri = UriComponentsBuilder
+                    .fromUriString("http://localhost:4200/oauth2/redirect")
+                    .queryParam("accessToken", accessToken)
+                    .queryParam("refreshToken", refreshToken)
+                    .queryParam("username", name)
+                    .encode()
+                    .build()
+                    .toUriString();
+//            userRepository.save(User.builder().name(name).email(email)
+//                        .picture(picture).role(Role.ROLE_USER)
+        }
+        else {
+            redirectUri = UriComponentsBuilder
+                    .fromUriString("http://localhost:4200/oauth2/redirect")
+                    .queryParam("accessToken", accessToken)
+                    .queryParam("refreshToken", refreshToken)
+                    .build()
+                    .toUriString();
+        }
 
         response.sendRedirect(redirectUri);
 
