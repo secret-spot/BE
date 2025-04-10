@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface GuideRepository extends JpaRepository<Guide, Long> {
     List<Guide> findByUserId(Long userId);
+    List<Guide> findTop5ByOrderByCreatedAtDesc();
 }
