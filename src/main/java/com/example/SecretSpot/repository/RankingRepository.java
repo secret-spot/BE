@@ -1,8 +1,11 @@
 package com.example.SecretSpot.repository;
 
 import com.example.SecretSpot.domain.Ranking;
+import com.example.SecretSpot.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RankingRepository extends JpaRepository<Ranking, Long> {
+import java.util.Optional;
 
+public interface RankingRepository extends JpaRepository<Ranking, Long> {
+    Optional<Ranking> findByUserId(Long userId);
 }
