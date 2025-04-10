@@ -1,0 +1,36 @@
+package com.example.SecretSpot.domain.compositekeys;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.Hibernate;
+
+import java.util.Objects;
+
+@Getter
+@Setter
+@Embeddable
+public class UserKeywordId implements java.io.Serializable {
+    private static final long serialVersionUID = 5778116589726330709L;
+    @Column(name = "keyword_id", nullable = false)
+    private Long keywordId;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        UserKeywordId entity = (UserKeywordId) o;
+        return Objects.equals(this.keywordId, entity.keywordId) &&
+                Objects.equals(this.userId, entity.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(keywordId, userId);
+    }
+
+}
