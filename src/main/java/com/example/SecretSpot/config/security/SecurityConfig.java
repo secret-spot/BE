@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserService userService;
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
 
@@ -28,7 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/css/**", "/images/**", "/js/**").permitAll()
                 .anyRequest().authenticated())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userRepository), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth -> oauth
                                 .successHandler(new OAuth2SuccessHandler(jwtProvider, userRepository)));
             return http.build();
