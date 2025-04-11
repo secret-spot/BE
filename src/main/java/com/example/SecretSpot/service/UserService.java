@@ -35,7 +35,7 @@ public class UserService {
                 "keyword", userKeywordRepository.findByUserId(userId),
                 "ranking", ranking.getRanking(),
                 "point", ranking.getTotalPoint(),
-                "userGuides", Optional.ofNullable(guideRepository.findByUserId(userId)).orElse(Collections.emptyList()),
+                "userGuides", Optional.ofNullable(guideRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId)).orElse(Collections.emptyList()),
                 "userReviews", Optional.ofNullable(reviewRepository.findByUserId(userId)).orElse(Collections.emptyList())
         );
     }
