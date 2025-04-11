@@ -1,6 +1,8 @@
 package com.example.SecretSpot.config.security;
 
+import com.example.SecretSpot.domain.Ranking;
 import com.example.SecretSpot.domain.User;
+import com.example.SecretSpot.repository.RankingRepository;
 import com.example.SecretSpot.repository.UserRepository;
 import com.example.SecretSpot.web.dto.TokenDto;
 import jakarta.servlet.ServletException;
@@ -20,6 +22,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
+    private final RankingRepository rankingRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -44,8 +47,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     .encode()
                     .build()
                     .toUriString();
-            userRepository.save(User.builder().name(name).email(email)
+            User user = userRepository.save(User.builder().name(name).email(email)
                         .profileImageUrl(picture).build());
+            rankingRepository.save(Ranking.builder().ranking(userRepository.count()).user(user).build());
         }
         else {
             redirectUri = UriComponentsBuilder
