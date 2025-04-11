@@ -1,5 +1,6 @@
 package com.example.SecretSpot.config.security;
 
+import com.example.SecretSpot.repository.RankingRepository;
 import com.example.SecretSpot.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
+    private final RankingRepository rankingRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,7 +35,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userRepository), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth -> oauth
-                                .successHandler(new OAuth2SuccessHandler(jwtProvider, userRepository)));
+                                .successHandler(new OAuth2SuccessHandler(jwtProvider, userRepository, rankingRepository)));
             return http.build();
     }
 }
