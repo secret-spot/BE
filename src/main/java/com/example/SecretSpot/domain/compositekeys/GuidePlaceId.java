@@ -3,6 +3,7 @@ package com.example.SecretSpot.domain.compositekeys;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
@@ -11,6 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Embeddable
+@NoArgsConstructor
 public class GuidePlaceId implements java.io.Serializable {
     private static final long serialVersionUID = -8876018727605485240L;
     @Column(name = "guide_id", nullable = false)
@@ -18,6 +20,11 @@ public class GuidePlaceId implements java.io.Serializable {
 
     @Column(name = "place_id", nullable = false)
     private Long placeId;
+
+    public GuidePlaceId(Long guideId, Long placeId) {
+        this.guideId = guideId;
+        this.placeId = placeId;
+    }
 
     @Override
     public boolean equals(Object o) {
