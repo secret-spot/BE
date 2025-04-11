@@ -1,17 +1,21 @@
 package com.example.SecretSpot.service;
 
 import com.example.SecretSpot.domain.*;
-import com.example.SecretSpot.repository.GuideImageRepository;
-import com.example.SecretSpot.repository.GuidePlaceRepository;
-import com.example.SecretSpot.repository.GuideRepository;
-import com.example.SecretSpot.repository.PlaceRepository;
+import com.example.SecretSpot.repository.*;
+import com.example.SecretSpot.web.dto.AnalyzeResponseDto;
 import com.example.SecretSpot.web.dto.GuideDto;
 import com.example.SecretSpot.web.dto.PlaceDto;
+import com.example.SecretSpot.web.dto.RegionDto;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.mapping.Any;
+import org.hibernate.mapping.KeyValue;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,10 @@ public class GuideService {
     private final GuideImageRepository guideImageRepository;
     private final GuidePlaceRepository guidePlaceRepository;
     private final PlaceRepository placeRepository;
+    private final GuideRegionRepository guideRegionRepository;
+    private final GuideKeywordRepository guideKeywordRepository;
+    private final RegionService regionService;
+    private final KeywordService keywordService;
 
     public Long saveGuide(GuideDto guide, User user) {
         // Guide 저장
@@ -53,5 +61,30 @@ public class GuideService {
         order = 1;
 
         return savedGuide.getId();
+    }
+
+    public void analyzeGuide(Long id) {
+        Guide guide = guideRepository.findById(id).orElseThrow(() -> new RuntimeException("가이드 없음"));
+        /**
+        // FastAPI 호출
+        AnalyzeResponseDto aiResponse;
+
+        // 테스트용
+        List<String> aiKeywords = aiResponse.getKeywords();
+        List<RegionDto> aiRegions = aiResponse.getRegions();
+
+        List<Keyword> keywords = keywordService.getKeywords(aiKeywords);
+        List<Region> regions = regionService.getRegions(aiRegions);
+
+        for (Keyword keyword : keywords) {
+            if (!guideKeywordRepository.existsByGuideAndKeyword(guide, keyword)) {
+                guideKeywordRepository.save(GuideKeyword.builder().guide(guide).keyword(keyword).build());
+            }
+        }
+        for (Region region : regions) {
+            if (!guideRegionRepository.existsByGuideAndRegion(guide, region)) {
+                guideRegionRepository.save(GuideRegion.builder().guide(guide).region(region).build());
+            }
+        } **/
     }
 }
