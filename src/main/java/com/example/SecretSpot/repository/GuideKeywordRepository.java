@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface GuideKeywordRepository extends JpaRepository<GuideKeyword, GuideKeywordId> {
-    List<Guide> findByKeyword(Keyword keyword);
+    List<GuideKeyword> findByKeyword(Keyword keyword);
 }

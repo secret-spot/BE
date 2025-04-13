@@ -3,6 +3,7 @@ package com.example.SecretSpot.domain.compositekeys;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
@@ -11,6 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Embeddable
+@NoArgsConstructor
 public class UserKeywordId implements java.io.Serializable {
     private static final long serialVersionUID = 5778116589726330709L;
     @Column(name = "keyword_id", nullable = false)

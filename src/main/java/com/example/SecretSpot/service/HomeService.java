@@ -32,7 +32,8 @@ public class HomeService {
         Keyword selectedKeyword = selectedUserKeyword.getKeyword();
 
         // 개선 필요
-        List<Guide> guides = guideKeywordRepository.findByKeyword(selectedKeyword);
+        List<Guide> guides = guideKeywordRepository.findByKeyword(selectedKeyword).stream()
+                .map(guideKeyword -> guideKeyword.getGuide()).collect(Collectors.toList());
         Collections.shuffle(guides);
         List<Guide> recommendedGuides = guides.stream().limit(5).collect(Collectors.toList());
         return recommendedGuides;
