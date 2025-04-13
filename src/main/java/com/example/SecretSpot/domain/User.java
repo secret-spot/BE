@@ -2,6 +2,7 @@ package com.example.SecretSpot.domain;
 
 import com.example.SecretSpot.domain.common.BaseTimeEntity;
 import com.example.SecretSpot.domain.enums.RegisterType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

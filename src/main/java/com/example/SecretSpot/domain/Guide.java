@@ -30,7 +30,7 @@ public class Guide extends BaseTimeEntity {
     private LocalDate endDate;
 
     @Column(name = "duration_days", insertable = false, updatable = false)
-    private Integer durationDays;
+    private Long durationDays;
 
     @Column(length = 100, nullable = false)
     private String title;

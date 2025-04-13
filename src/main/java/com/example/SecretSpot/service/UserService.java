@@ -11,7 +11,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,15 +28,17 @@ public class UserService {
 
     public Map<String, Object> getUserProfile(User user) {
         Long userId = user.getId();
-        Ranking ranking = rankingRepository.findById(userId).orElseThrow(() -> new RuntimeException("랭킹 정보 없음"));
+        Ranking ranking = rankingRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("랭킹 정보 없음"));
+        System.out.println("ranking.getRanking() = " + ranking.getRanking());
         return Map.of("profile_image", user.getProfileImageUrl(),
                 "name", user.getName(),
-                "nickname", user.getNickname(),
-                "keyword", userKeywordRepository.findByUserId(userId),
+                "nickname", getNicknameOrName(user),
+                "keyword", userKeywordRepository.findByUserId(userId).stream()
+                        .map(userKeyword -> userKeyword.getKeyword().getName()).collect(Collectors.toList()),
                 "ranking", ranking.getRanking(),
                 "point", ranking.getTotalPoint(),
-                "userGuides", guideRepository.findByUserId(userId),
-                "userReviews", reviewRepository.findByUserId(userId)
+                "userGuides", Optional.ofNullable(guideRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId)).orElse(Collections.emptyList()),
+                "userReviews", Optional.ofNullable(reviewRepository.findByUserId(userId)).orElse(Collections.emptyList())
         );
     }
 
@@ -60,5 +65,13 @@ public class UserService {
                 userKeywordRepository.save(userKeyword);
             }
         }
+    }
+
+    public String getNicknameOrName(User user) {
+        String nickname = user.getNickname();
+        if (nickname == null) {
+            return user.getName();
+        }
+        else return nickname;
     }
 }
