@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,8 @@ public class UserService {
         return Map.of("profile_image", user.getProfileImageUrl(),
                 "name", user.getName(),
                 "nickname", getNicknameOrName(user),
-                "keyword", userKeywordRepository.findByUserId(userId),
+                "keyword", userKeywordRepository.findByUserId(userId).stream()
+                        .map(userKeyword -> userKeyword.getKeyword().getName()).collect(Collectors.toList()),
                 "ranking", ranking.getRanking(),
                 "point", ranking.getTotalPoint(),
                 "userGuides", Optional.ofNullable(guideRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId)).orElse(Collections.emptyList()),
