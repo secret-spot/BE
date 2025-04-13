@@ -2,7 +2,10 @@ package com.example.SecretSpot.config.security;
 
 import com.example.SecretSpot.domain.Ranking;
 import com.example.SecretSpot.domain.User;
+import com.example.SecretSpot.domain.UserKeyword;
+import com.example.SecretSpot.repository.KeywordRepository;
 import com.example.SecretSpot.repository.RankingRepository;
+import com.example.SecretSpot.repository.UserKeywordRepository;
 import com.example.SecretSpot.repository.UserRepository;
 import com.example.SecretSpot.web.dto.TokenDto;
 import jakarta.servlet.ServletException;
@@ -23,6 +26,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final RankingRepository rankingRepository;
+    private final UserKeywordRepository userKeywordRepository;
+    private final KeywordRepository keywordRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -49,6 +54,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     .toUriString();
             User user = userRepository.save(User.builder().name(name).email(email)
                         .profileImageUrl(picture).build());
+            userRepository.flush();
+            
+            // 디폴트 키워드 저장
+            userKeywordRepository.save(new UserKeyword(keywordRepository.findByName("친구").orElseThrow(), user));
+            userKeywordRepository.save(new UserKeyword(keywordRepository.findByName("음식").orElseThrow(), user));
+            userKeywordRepository.save(new UserKeyword(keywordRepository.findByName("힐링").orElseThrow(), user));
+
             rankingRepository.save(Ranking.builder().ranking(userRepository.count()).user(user).build());
         }
         else {
