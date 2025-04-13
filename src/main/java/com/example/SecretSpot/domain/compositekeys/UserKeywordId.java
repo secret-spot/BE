@@ -19,6 +19,11 @@ public class UserKeywordId implements java.io.Serializable {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    public UserKeywordId(Long keywordId, Long userId) {
+        this.keywordId = keywordId;
+        this.userId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

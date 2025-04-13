@@ -17,7 +17,7 @@ public class Place extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private Long googleId;
+    private String googleId;
 
     @Column(length = 50, nullable = false)
     private String name;
@@ -25,6 +25,6 @@ public class Place extends BaseTimeEntity {
     @Lob
     private String address;
 
-    @Column(nullable = false)
+    @Column
     private Byte rating;
 }

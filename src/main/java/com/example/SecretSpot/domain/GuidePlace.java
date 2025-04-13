@@ -2,12 +2,15 @@ package com.example.SecretSpot.domain;
 
 import com.example.SecretSpot.domain.compositekeys.GuidePlaceId;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "guide_places")
 public class GuidePlace {
     @EmbeddedId
@@ -23,4 +26,10 @@ public class GuidePlace {
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
+    @Builder
+    public GuidePlace(Guide guide, Place place) {
+        this.guide = guide;
+        this.place = place;
+        this.id = new GuidePlaceId(guide.getId(), place.getId());
+    }
 }
