@@ -12,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -27,6 +28,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final RankingRepository rankingRepository;
     private final UserKeywordRepository userKeywordRepository;
     private final KeywordRepository keywordRepository;
+
+    @Value("${REDIRECT_BASE_URL}")
+    private String redirectBaseUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -44,7 +48,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         if (!userRepository.existsByEmail(email)) {
             redirectUri = UriComponentsBuilder
-                    .fromUriString("http://localhost:4200/oauth2/redirect")
+                    .fromUriString(redirectBaseUrl + "/oauth2/redirect")
                     .queryParam("accessToken", accessToken)
                     .queryParam("refreshToken", refreshToken)
                     .queryParam("username", name)
@@ -63,7 +67,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             rankingRepository.save(Ranking.builder().ranking(userRepository.count()).user(user).build());
         } else {
             redirectUri = UriComponentsBuilder
-                    .fromUriString("http://localhost:4200/oauth2/redirect")
+                    .fromUriString(redirectBaseUrl + "/oauth2/redirect")
                     .queryParam("accessToken", accessToken)
                     .queryParam("refreshToken", refreshToken)
                     .build()
@@ -71,8 +75,5 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
 
         response.sendRedirect(redirectUri);
-
-        System.out.println("accessToken = " + accessToken);
-        System.out.println("refreshToken = " + refreshToken);
     }
 }
