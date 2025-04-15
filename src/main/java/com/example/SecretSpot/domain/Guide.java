@@ -28,7 +28,7 @@ public class Guide extends BaseTimeEntity {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(name = "duration_days", insertable = false, updatable = false)
+    @Column(name = "duration_days", nullable = false, insertable = false, updatable = false)
     private Integer durationDays;
 
     @Column(length = 100, nullable = false)

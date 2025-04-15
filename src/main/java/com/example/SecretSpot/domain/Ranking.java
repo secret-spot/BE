@@ -23,9 +23,8 @@ public class Ranking extends BaseCreatedEntity {
     @Column(name = "ranking", nullable = false)
     private Long ranking;
 
-    @Column(name = "total_point", nullable = false)
-    @Builder.Default
-    private Integer totalPoint = 0;
+    @Column(name = "total_point", nullable = false, insertable = false, updatable = false)
+    private Integer totalPoint;
 
     @Column(name = "guide_point", nullable = false)
     @Builder.Default
