@@ -3,9 +3,6 @@ package com.example.SecretSpot.domain;
 import com.example.SecretSpot.domain.common.BaseCreatedEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-
-import java.time.Instant;
 
 @Entity
 @Table(name = "rankings")

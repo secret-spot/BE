@@ -45,7 +45,9 @@ public class UserService {
     @Transactional
     public void updateUserProfile(ProfileUpdateRequestDto requestDto, String email) {
         User user = userRepository.findByEmail(email);
-        if (user == null) { throw new RuntimeException("업데이트할 유저를 찾을 수 없음"); }
+        if (user == null) {
+            throw new RuntimeException("업데이트할 유저를 찾을 수 없음");
+        }
         if (requestDto.getNickname() != null) {
             user.setNickname(requestDto.getNickname());
         }
@@ -71,7 +73,6 @@ public class UserService {
         String nickname = user.getNickname();
         if (nickname == null) {
             return user.getName();
-        }
-        else return nickname;
+        } else return nickname;
     }
 }

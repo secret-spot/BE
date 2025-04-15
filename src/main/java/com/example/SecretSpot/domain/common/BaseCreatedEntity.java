@@ -1,8 +1,9 @@
 package com.example.SecretSpot.domain.common;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.Column;
+
 import java.time.LocalDateTime;
 
 @MappedSuperclass

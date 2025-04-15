@@ -1,6 +1,6 @@
 package com.example.SecretSpot.web.controller;
 
-import com.example.SecretSpot.domain.*;
+import com.example.SecretSpot.domain.User;
 import com.example.SecretSpot.service.GuideService;
 import com.example.SecretSpot.service.KeywordService;
 import com.example.SecretSpot.service.RegionService;
@@ -8,11 +8,10 @@ import com.example.SecretSpot.web.dto.GuideDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor

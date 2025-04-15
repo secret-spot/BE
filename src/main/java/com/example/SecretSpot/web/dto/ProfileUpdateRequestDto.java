@@ -1,6 +1,5 @@
 package com.example.SecretSpot.web.dto;
 
-import com.example.SecretSpot.domain.Keyword;
 import lombok.Data;
 
 import java.util.List;

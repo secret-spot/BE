@@ -1,7 +1,7 @@
 package com.example.SecretSpot.domain;
 
-import com.example.SecretSpot.domain.compositekeys.GuideKeywordId;
 import com.example.SecretSpot.domain.common.BaseUpdatedEntity;
+import com.example.SecretSpot.domain.compositekeys.GuideKeywordId;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

@@ -5,8 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -26,18 +26,18 @@ public class JwtProvider {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-     public TokenDto createTokens(String email) {
-         Date now = new Date();
+    public TokenDto createTokens(String email) {
+        Date now = new Date();
 
-         String accessToken = Jwts.builder().setSubject(email).setIssuedAt(now)
-                 .setExpiration(new Date(now.getTime() + EXPIRE_ACCESS)).signWith(secretKey, SignatureAlgorithm.HS256)
-                 .compact(); // 문자열 형태의 JWT 토큰 생성
-         String refreshToken = Jwts.builder().setSubject(email).setIssuedAt(now)
-                 .setExpiration(new Date(now.getTime() + EXPIRE_REFRESH)).signWith(secretKey, SignatureAlgorithm.HS256)
-                 .compact();
+        String accessToken = Jwts.builder().setSubject(email).setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + EXPIRE_ACCESS)).signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact(); // 문자열 형태의 JWT 토큰 생성
+        String refreshToken = Jwts.builder().setSubject(email).setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + EXPIRE_REFRESH)).signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
 
-         return new TokenDto(accessToken, refreshToken);
-     }
+        return new TokenDto(accessToken, refreshToken);
+    }
 
     public String getEmailFromToken(String token) {
         // Subject로 설정해놓은 Email 가져오기
@@ -46,11 +46,11 @@ public class JwtProvider {
     }
 
     public boolean validateToken(String token) {
-         try {
-             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-             return true;
-         } catch (Exception e) {
-             return false;
-         }
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

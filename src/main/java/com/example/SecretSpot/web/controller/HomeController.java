@@ -1,7 +1,6 @@
 package com.example.SecretSpot.web.controller;
 
 import com.example.SecretSpot.domain.Guide;
-import com.example.SecretSpot.domain.Region;
 import com.example.SecretSpot.domain.User;
 import com.example.SecretSpot.service.HomeService;
 import lombok.RequiredArgsConstructor;

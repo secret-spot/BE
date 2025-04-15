@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -53,17 +52,16 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     .build()
                     .toUriString();
             User user = userRepository.save(User.builder().name(name).email(email)
-                        .profileImageUrl(picture).build());
+                    .profileImageUrl(picture).build());
             userRepository.flush();
-            
+
             // 디폴트 키워드 저장
             userKeywordRepository.save(new UserKeyword(keywordRepository.findByName("친구").orElseThrow(), user));
             userKeywordRepository.save(new UserKeyword(keywordRepository.findByName("음식").orElseThrow(), user));
             userKeywordRepository.save(new UserKeyword(keywordRepository.findByName("힐링").orElseThrow(), user));
 
             rankingRepository.save(Ranking.builder().ranking(userRepository.count()).user(user).build());
-        }
-        else {
+        } else {
             redirectUri = UriComponentsBuilder
                     .fromUriString("http://localhost:4200/oauth2/redirect")
                     .queryParam("accessToken", accessToken)

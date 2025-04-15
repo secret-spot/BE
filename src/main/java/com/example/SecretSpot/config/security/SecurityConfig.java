@@ -29,17 +29,17 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception
-                .authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"error\": \"Unauthorized\"}");
-                }))
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                        }))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/css/**", "/images/**", "/js/**").permitAll()
-                .anyRequest().authenticated())
+                        .requestMatchers("/", "/css/**", "/images/**", "/js/**").permitAll()
+                        .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userRepository), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth -> oauth
-                                .successHandler(new OAuth2SuccessHandler(jwtProvider, userRepository, rankingRepository, userKeywordRepository, keywordRepository)));
-            return http.build();
+                        .successHandler(new OAuth2SuccessHandler(jwtProvider, userRepository, rankingRepository, userKeywordRepository, keywordRepository)));
+        return http.build();
     }
 }
