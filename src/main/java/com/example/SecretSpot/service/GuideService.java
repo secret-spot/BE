@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +26,9 @@ public class GuideService {
         // Guide 저장
         LocalDate startDate = guide.getStartDate();
         LocalDate endDate = guide.getEndDate();
-        Long duration = ChronoUnit.DAYS.between(startDate, endDate);
         Guide savedGuide = guideRepository.save(Guide.builder().title(guide.getTitle()).user(user)
                 .content(guide.getContent()).startDate(startDate)
-                .endDate(endDate).durationDays(duration).build());
+                .endDate(endDate).build());
         guideRepository.flush();
 
         // GuidePlace 저장

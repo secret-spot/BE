@@ -28,8 +28,8 @@ public class Guide extends BaseTimeEntity {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(name = "duration_days", insertable = false, updatable = false)
-    private Long durationDays;
+    @Column(name = "duration_days", nullable = false, insertable = false, updatable = false)
+    private Integer durationDays;
 
     @Column(length = 100, nullable = false)
     private String title;
@@ -40,4 +40,12 @@ public class Guide extends BaseTimeEntity {
 
     @Lob
     private String summaryReview;
+
+    @Column(name = "rarity_point", nullable = false)
+    @Builder.Default
+    private Integer rarityPoint = 0;
+
+    @Column(name = "review_rating", nullable = false)
+    @Builder.Default
+    private Double reviewRating = 0.0;
 }
