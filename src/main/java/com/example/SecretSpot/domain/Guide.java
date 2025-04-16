@@ -44,4 +44,8 @@ public class Guide extends BaseTimeEntity {
     @Column(name = "rarity_point", nullable = false)
     @Builder.Default
     private Integer rarityPoint = 0;
+
+    @Column(name = "review_rating", nullable = false)
+    @Builder.Default
+    private Double reviewRating = 0.0;
 }
