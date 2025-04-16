@@ -10,6 +10,9 @@ import java.util.List;
 public interface UserKeywordRepository extends JpaRepository<UserKeyword, UserKeywordId> {
     List<UserKeyword> findByUserId(Long userId);
 
+    List<UserKeyword> findAllById_UserIdIn(List<Long> userIds);
+
+
     @Transactional
     void deleteByUserId(Long userId);
 }

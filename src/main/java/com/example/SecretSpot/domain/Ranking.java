@@ -23,19 +23,22 @@ public class Ranking extends BaseCreatedEntity {
     @Column(name = "ranking", nullable = false)
     private Long ranking;
 
-    @Column(name = "total_point", nullable = false)
-    @Builder.Default
-    private Integer totalPoint = 0;
+    @Column(name = "total_point", nullable = false, insertable = false, updatable = false)
+    private Integer totalPoint;
 
-    @Column(name = "guide_points", nullable = false)
+    @Column(name = "guide_point", nullable = false)
     @Builder.Default
     private Integer guidePoints = 0;
 
-    @Column(name = "hidden_points", nullable = false)
+    @Column(name = "rarity_point", nullable = false)
     @Builder.Default
-    private Integer hiddenPoints = 0;
+    private Integer rarityPoint = 0;
 
-    @Column(name = "review_points", nullable = false)
+    @Column(name = "review_point", nullable = false)
     @Builder.Default
-    private Integer reviewPoints = 0;
+    private Integer reviewPoint = 0;
+    
+    @Column(name = "guide_rating_point", nullable = false)
+    @Builder.Default
+    private Integer guideRatingPoint = 0;
 }

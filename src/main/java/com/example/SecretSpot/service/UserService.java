@@ -1,5 +1,6 @@
 package com.example.SecretSpot.service;
 
+import com.example.SecretSpot.common.util.UserUtils;
 import com.example.SecretSpot.domain.Keyword;
 import com.example.SecretSpot.domain.Ranking;
 import com.example.SecretSpot.domain.User;
@@ -32,7 +33,7 @@ public class UserService {
         System.out.println("ranking.getRanking() = " + ranking.getRanking());
         return Map.of("profile_image", user.getProfileImageUrl(),
                 "name", user.getName(),
-                "nickname", getNicknameOrName(user),
+                "nickname", UserUtils.getNicknameOrName(user),
                 "keyword", userKeywordRepository.findByUserId(userId).stream()
                         .map(userKeyword -> userKeyword.getKeyword().getName()).collect(Collectors.toList()),
                 "ranking", ranking.getRanking(),
@@ -67,12 +68,5 @@ public class UserService {
                 userKeywordRepository.save(userKeyword);
             }
         }
-    }
-
-    public String getNicknameOrName(User user) {
-        String nickname = user.getNickname();
-        if (nickname == null) {
-            return user.getName();
-        } else return nickname;
     }
 }
