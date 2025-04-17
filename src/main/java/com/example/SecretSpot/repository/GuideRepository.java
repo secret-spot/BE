@@ -12,6 +12,8 @@ public interface GuideRepository extends JpaRepository<Guide, Long> {
 
     List<Guide> findTop5ByOrderByCreatedAtDesc();
 
+    List<Guide> findTop10ByOrderByRarityPointDesc();
+
     Integer countByUserId(Long userId);
 
     @Query("SELECT SUM(g.rarityPoint) FROM Guide g WHERE g.user.id = :userId")
