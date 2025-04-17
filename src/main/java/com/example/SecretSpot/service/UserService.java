@@ -21,16 +21,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final GuideRepository guideRepository;
-    private final RankingRepository rankingRepository;
     private final ReviewRepository reviewRepository;
     private final UserKeywordRepository userKeywordRepository;
     private final KeywordRepository keywordRepository;
     private final UserRepository userRepository;
+    private final RankingService rankingService;
 
     public Map<String, Object> getUserProfile(User user) {
         Long userId = user.getId();
-        Ranking ranking = rankingRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("랭킹 정보 없음"));
-        System.out.println("ranking.getRanking() = " + ranking.getRanking());
+        Ranking ranking = rankingService.getMyRanking(user);
         return Map.of("profile_image", user.getProfileImageUrl(),
                 "name", user.getName(),
                 "nickname", UserUtils.getNicknameOrName(user),

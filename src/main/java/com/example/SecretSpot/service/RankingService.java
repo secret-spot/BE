@@ -11,6 +11,9 @@ import com.example.SecretSpot.web.dto.HomeRankingDto;
 import com.example.SecretSpot.web.dto.RankingPageDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -70,7 +73,7 @@ public class RankingService {
      * 홈의 내 랭킹 섹션에 띄울 유저 반환 함수
      */
     public List<HomeRankingDto> getHomeRanking() {
-        List<Ranking> topRankings = getTopRankings();
+        List<Ranking> topRankings = getTopRankings(4);
 
         return topRankings.stream()
                 .map(ranking -> {
@@ -89,8 +92,8 @@ public class RankingService {
      * 랭킹 페이지에 필요한 데이터 반환 함수
      */
     public List<RankingPageDto> getRankingPage(User me) {
-        Ranking myRanking = getMyRanking(me.getId());
-        List<Ranking> topRankings = getTopRankings();
+        Ranking myRanking = getMyRanking(me);
+        List<Ranking> topRankings = getTopRankings(10);
 
         //유저 키워드 매핑용 userId 리스트 생성 후 키워드 매핑
         List<Long> userIds = Stream.concat(
@@ -124,15 +127,22 @@ public class RankingService {
     /**
      * 나의 최신 랭킹 반환 함수
      */
-    public Ranking getMyRanking(Long userId) {
-        return rankingRepository.findTop1ByUserIdOrderByCreatedAtDesc(userId)
-                .orElseThrow(() -> new IllegalArgumentException("랭킹 값이 존재하지 않는 유저입니다."));
+    public Ranking getMyRanking(User user) {
+        return rankingRepository
+                .findTop1ByUserIdOrderByCreatedAtDesc(user.getId())
+                .orElseGet(() -> {
+                    Ranking empty = new Ranking();
+                    empty.setUser(user);
+                    empty.setRanking(0L);
+                    return empty;
+                });
     }
 
     /**
-     * 최신 날짜 기준 랭킹 상위 5명 계산 함수
+     * 최신 날짜 기준 랭킹 상위 n명 계산 함수
      */
-    private List<Ranking> getTopRankings() {
-        return rankingRepository.findTop5ByOrderByCreatedAtDescRankingAsc();
+    private List<Ranking> getTopRankings(int count) {
+        Pageable page = PageRequest.of(0, count, Sort.by("ranking"));
+        return rankingRepository.findLatestSnapshotRankings(page);
     }
 }
