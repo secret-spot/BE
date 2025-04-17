@@ -11,5 +11,9 @@ import java.util.List;
 public interface GuideKeywordRepository extends JpaRepository<GuideKeyword, GuideKeywordId> {
     List<GuideKeyword> findByKeyword(Keyword keyword);
 
+    List<GuideKeyword> findAllById_guideIdIn(List<Long> guideIds);
+
     boolean existsByGuideAndKeyword(Guide guide, Keyword keyword);
+
+    List<Long> guide(Guide guide);
 }
