@@ -1,13 +1,13 @@
 package com.example.SecretSpot.service;
 
+import com.example.SecretSpot.common.util.UserUtils;
 import com.example.SecretSpot.domain.Guide;
 import com.example.SecretSpot.domain.Review;
 import com.example.SecretSpot.domain.User;
 import com.example.SecretSpot.event.review.ReviewSummaryEvent;
 import com.example.SecretSpot.repository.GuideRepository;
 import com.example.SecretSpot.repository.ReviewRepository;
-import com.example.SecretSpot.web.dto.ReviewCreateDto;
-import com.example.SecretSpot.web.dto.ReviewCreateResponseDto;
+import com.example.SecretSpot.web.dto.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -79,6 +80,54 @@ public class ReviewService {
                 .createdAt(review.getCreatedAt())
                 .totalReviewCount(totalCount)
                 .averageRating(averageRating)
+                .build();
+    }
+
+    /**
+     * 특정 가이드의 리뷰 탭 데이터 반환 함수
+     */
+    public GuideReviewTabDto getGuideReviewTab(Long guideId, User user) {
+        Guide guide = guideRepository.findById(guideId)
+                .orElseThrow(() -> new EntityNotFoundException("Not Found Guide, id=" + guideId));
+
+        String summaryReview = guide.getSummaryReview();
+
+        MyReviewDto myReviewDto = null;
+        String myReviewStatus = "NOT_WRITTEN";
+        if (!guide.getUser().getId().equals(user.getId())) {
+            Review myReview = reviewRepository.findByGuideIdAndUser(guideId, user).orElse(null);
+            if (myReview != null) {
+                myReviewDto = MyReviewDto.builder()
+                        .id(myReview.getId())
+                        .rating(myReview.getRating())
+                        .content(myReview.getContent())
+                        .createdAt(myReview.getCreatedAt())
+                        .build();
+                myReviewStatus = "WRITTEN";
+            }
+        } else {
+            myReviewStatus = "WRITER";
+        }
+
+        List<Review> reviewList = reviewRepository.findAllByGuideIdOrderByCreatedAtDesc(guideId);
+
+        List<ReviewListItemDto> reviews = reviewList.stream()
+                .map(review -> ReviewListItemDto.builder()
+                        .id(review.getId())
+                        .profileImageUrl(review.getUser().getProfileImageUrl())
+                        .nickname(UserUtils.getNicknameOrName(review.getUser()))
+                        .rating(review.getRating())
+                        .content(review.getContent())
+                        .createdAt(review.getCreatedAt())
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        return GuideReviewTabDto.builder()
+                .myReviewStatus(myReviewStatus)
+                .myReview(myReviewDto)
+                .summaryReview(summaryReview)
+                .reviews(reviews)
                 .build();
     }
 }
