@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -26,6 +27,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final GuideRepository guideRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final GuideService guideService;
+    private final GuideRegionService guideRegionService;
 
     /**
      * 리뷰 작성 함수
@@ -129,5 +132,32 @@ public class ReviewService {
                 .summaryReview(summaryReview)
                 .reviews(reviews)
                 .build();
+    }
+
+    /**
+     * 마이페이지의 내가 작성한 리뷰 카드뷰 리스트 데이터 반환 함수
+     */
+    public List<MyReviewCardDto> getMyReviews(User user) {
+        List<Review> reviews = reviewRepository.findAllByUserId(user.getId());
+
+        List<Long> guideIds = reviews.stream()
+                .map(review -> review.getGuide().getId())
+                .collect(Collectors.toList());
+
+        Map<Long, List<String>> guideRegions = guideRegionService.getGuideRegionNames(guideIds);
+
+        return reviews.stream()
+                .map(review -> {
+                    Guide guide = review.getGuide();
+
+                    return MyReviewCardDto.builder()
+                            .guideId(guide.getId())
+                            .guideThumbnailUrl(guideService.getThumbnailUrl(guide.getId()))
+                            .guideTitle(guide.getTitle())
+                            .guideRegion(guideRegions.get(guide.getId()))
+                            .myReviewRating(review.getRating())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 }
