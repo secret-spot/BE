@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ScrapController {
     private final ScrapService scrapService;
 
-    @PostMapping("/api/guides/{guideId}/scrap")
+    @PostMapping("/api/guides/{guideId}/scraps")
     public ResponseEntity<Object> createScrap(@PathVariable Long guideId, @AuthenticationPrincipal User user) throws BadRequestException {
         scrapService.createScrap(guideId, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/api/guides/{guideId}/scrap")
+    @DeleteMapping("/api/guides/{guideId}/scraps")
     public ResponseEntity<Object> deleteScrap(@PathVariable Long guideId, @AuthenticationPrincipal User user) {
         scrapService.deleteScrap(guideId, user);
         return ResponseEntity.noContent().build();
