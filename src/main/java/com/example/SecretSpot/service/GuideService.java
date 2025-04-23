@@ -1,6 +1,7 @@
 package com.example.SecretSpot.service;
 
 import com.example.SecretSpot.domain.*;
+import com.example.SecretSpot.mapper.GuideMapper;
 import com.example.SecretSpot.repository.*;
 import com.example.SecretSpot.web.dto.GuideDto;
 import com.example.SecretSpot.web.dto.GuideListItemDto;
@@ -9,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +25,8 @@ public class GuideService {
     private final KeywordService keywordService;
     private final GuideKeywordService guideKeywordService;
     private final GuideRegionService guideRegionService;
+    private final ScrapService scrapService;
+    private final GuideMapper guideMapper;
     int order = 1;
 
     public Long saveGuide(GuideDto guide, User user) {
@@ -91,37 +91,6 @@ public class GuideService {
      */
     public List<GuideListItemDto> getHiddenGuide() {
         List<Guide> hiddenGuide = guideRepository.findTop10ByOrderByRarityPointDesc();
-        return convertToGuideListItemDtos(hiddenGuide);
-    }
-
-    /**
-     * 썸네일 반환 함수
-     */
-    public String getThumbnailUrl(Long guideId) {
-        GuideImage image = guideImageRepository.findTop1ByGuideIdOrderBySortOrderAsc(guideId);
-        return image != null ? image.getUrl() : null;
-    }
-
-    /**
-     * List<Guide>를 GuideListItemDto로 변환하는 함수
-     */
-    private List<GuideListItemDto> convertToGuideListItemDtos(List<Guide> guides) {
-        List<Long> guideIds = guides.stream()
-                .map(Guide::getId)
-                .collect(Collectors.toList());
-
-        Map<Long, List<String>> guideKeywords = guideKeywordService.getGuideKeywordNames(guideIds);
-        Map<Long, List<String>> guideRegions = guideRegionService.getGuideRegionNames(guideIds);
-
-        return guides.stream()
-                .map(guide -> GuideListItemDto.builder()
-                        .id(guide.getId())
-                        .thumbnailUrl(getThumbnailUrl(guide.getId()))
-                        .title(guide.getTitle())
-                        .reviewRating(guide.getReviewRating())
-                        .keywords(guideKeywords.getOrDefault(guide.getId(), Collections.emptyList()))
-                        .regions(guideRegions.getOrDefault(guide.getId(), Collections.emptyList()))
-                        .build())
-                .collect(Collectors.toList());
+        return guideMapper.toListDtos(hiddenGuide);
     }
 }
