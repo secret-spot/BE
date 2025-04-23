@@ -77,7 +77,7 @@ public class ScrapService {
 
         Set<Long> scrapedIdSet = new HashSet<>(guideIds);
 
-        return guideMapper.toCardDtos(sortedGuides, scrapedIdSet);
+        return guideMapper.toCardDtosWithScrap(sortedGuides, scrapedIdSet);
     }
 
     /**
