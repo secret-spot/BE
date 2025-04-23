@@ -31,16 +31,29 @@ public class GuideMapper {
         Map<Long, List<String>> regions = guideRegionService.getGuideRegionNames(guideIds);
 
         return guides.stream().map(guide -> {
-            Long guideId = guide.getId();  // 한 번만 호출
+            Long guideId = guide.getId();
+
+            Boolean isScraped = null;
+            if (scrapedIds != null) {
+                isScraped = scrapedIds.contains(guideId);
+            }
+
             return GuideCardItemDto.builder()
                     .id(guideId)
                     .thumbnailUrl(guideImageService.getThumbnailUrl(guideId))
                     .title(guide.getTitle())
                     .keywords(keywords.getOrDefault(guideId, List.of()))
                     .regions(regions.getOrDefault(guideId, List.of()))
-                    .isScraped(scrapedIds.contains(guideId))
+                    .isScraped(isScraped)
                     .build();
         }).toList();
+    }
+
+    /**
+     * 스크랩 기능이 없는 가이드 카드 뷰 전용 DTO 변환
+     */
+    public List<GuideCardItemDto> toCardDtos(List<Guide> guides) {
+        return toCardDtos(guides, null);
     }
 
     /**
