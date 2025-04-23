@@ -6,7 +6,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "guide_images",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"guide_id", "sortOrder"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"guide_id", "sort_order"}))
 @Getter
 @Setter
 @NoArgsConstructor

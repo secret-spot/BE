@@ -97,7 +97,7 @@ public class GuideService {
     /**
      * 썸네일 반환 함수
      */
-    private String getThumbnailUrl(Long guideId) {
+    public String getThumbnailUrl(Long guideId) {
         GuideImage image = guideImageRepository.findTop1ByGuideIdOrderBySortOrderAsc(guideId);
         return image != null ? image.getUrl() : null;
     }
