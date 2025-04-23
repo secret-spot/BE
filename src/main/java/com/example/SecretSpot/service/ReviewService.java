@@ -27,7 +27,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final GuideRepository guideRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final GuideService guideService;
+    private final GuideImageService guideImageService;
     private final GuideRegionService guideRegionService;
 
     /**
@@ -152,7 +152,7 @@ public class ReviewService {
 
                     return MyReviewCardDto.builder()
                             .guideId(guide.getId())
-                            .guideThumbnailUrl(guideService.getThumbnailUrl(guide.getId()))
+                            .guideThumbnailUrl(guideImageService.getThumbnailUrl(guide.getId()))
                             .guideTitle(guide.getTitle())
                             .guideRegion(guideRegions.get(guide.getId()))
                             .myReviewRating(review.getRating())

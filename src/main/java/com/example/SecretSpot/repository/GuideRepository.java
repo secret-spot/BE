@@ -20,4 +20,6 @@ public interface GuideRepository extends JpaRepository<Guide, Long> {
     Integer sumRarityPointByUserId(@Param("userId") Long userId);
 
     Integer countByUserIdAndReviewRatingGreaterThanEqual(Long userId, double v);
+
+    List<Guide> findAllByIdIn(List<Long> guideIds);
 }

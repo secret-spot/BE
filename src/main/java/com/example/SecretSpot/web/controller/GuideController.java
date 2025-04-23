@@ -22,7 +22,7 @@ public class GuideController {
     private final RegionService regionService;
 
     @PostMapping("/api/guides")
-    public ResponseEntity<Long> guide(@RequestBody GuideDto guide, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Long> createGuide(@RequestBody GuideDto guide, @AuthenticationPrincipal User user) {
         Long guideId = guideService.saveGuide(guide, user);
         return ResponseEntity.ok(guideId);
     }
