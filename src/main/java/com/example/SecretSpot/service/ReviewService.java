@@ -5,7 +5,6 @@ import com.example.SecretSpot.domain.Guide;
 import com.example.SecretSpot.domain.Review;
 import com.example.SecretSpot.domain.User;
 import com.example.SecretSpot.event.review.ReviewSummaryEvent;
-import com.example.SecretSpot.provider.GuideThumbnailProvider;
 import com.example.SecretSpot.repository.GuideRepository;
 import com.example.SecretSpot.repository.ReviewRepository;
 import com.example.SecretSpot.web.dto.*;
@@ -28,7 +27,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final GuideRepository guideRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final GuideThumbnailProvider guideThumbnailProvider;
+    private final GuideImageService guideImageService;
     private final GuideRegionService guideRegionService;
 
     /**
@@ -153,7 +152,7 @@ public class ReviewService {
 
                     return MyReviewCardDto.builder()
                             .guideId(guide.getId())
-                            .guideThumbnailUrl(guideThumbnailProvider.getThumbnailUrl(guide.getId()))
+                            .guideThumbnailUrl(guideImageService.getThumbnailUrl(guide.getId()))
                             .guideTitle(guide.getTitle())
                             .guideRegion(guideRegions.get(guide.getId()))
                             .myReviewRating(review.getRating())

@@ -1,7 +1,7 @@
 package com.example.SecretSpot.mapper;
 
 import com.example.SecretSpot.domain.Guide;
-import com.example.SecretSpot.provider.GuideThumbnailProvider;
+import com.example.SecretSpot.service.GuideImageService;
 import com.example.SecretSpot.service.GuideKeywordService;
 import com.example.SecretSpot.service.GuideRegionService;
 import com.example.SecretSpot.web.dto.GuideCardItemDto;
@@ -18,7 +18,7 @@ import java.util.Set;
 public class GuideMapper {
     private final GuideKeywordService guideKeywordService;
     private final GuideRegionService guideRegionService;
-    private final GuideThumbnailProvider guideThumbnailProvider;
+    private final GuideImageService guideImageService;
 
     /**
      * 스크랩 기능이 있는 가이드 카드 뷰 전용 DTO 변환
@@ -34,7 +34,7 @@ public class GuideMapper {
             Long guideId = guide.getId();  // 한 번만 호출
             return GuideCardItemDto.builder()
                     .id(guideId)
-                    .thumbnailUrl(guideThumbnailProvider.getThumbnailUrl(guideId))
+                    .thumbnailUrl(guideImageService.getThumbnailUrl(guideId))
                     .title(guide.getTitle())
                     .keywords(keywords.getOrDefault(guideId, List.of()))
                     .regions(regions.getOrDefault(guideId, List.of()))
@@ -57,7 +57,7 @@ public class GuideMapper {
             Long guideId = guide.getId();
             return GuideListItemDto.builder()
                     .id(guideId)
-                    .thumbnailUrl(guideThumbnailProvider.getThumbnailUrl(guideId))
+                    .thumbnailUrl(guideImageService.getThumbnailUrl(guideId))
                     .title(guide.getTitle())
                     .reviewRating(guide.getReviewRating())
                     .keywords(keywords.getOrDefault(guideId, List.of()))
