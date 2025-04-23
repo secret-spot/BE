@@ -96,4 +96,22 @@ public class ScrapService {
 
         return guideMapper.toListDtos(scrapedGuides);
     }
+
+    /**
+     * 스크랩한 가이드 여부 확인
+     */
+    public boolean checkIsScraped(Long userId, Long guideId) {
+        ScrapId scrapId = new ScrapId(userId, guideId);
+        return scrapRepository.existsById(scrapId);
+    }
+
+    /**
+     * 한 번에 여러 가이드 스크랩 여부 확인
+     */
+    public List<Long> getScrappedGuideIds(Long userId, List<Long> guideIds) {
+        return scrapRepository
+                .findAllById_UserIdAndId_GuideIdIn(userId, guideIds)
+                .stream().map(s -> s.getGuide().getId())
+                .toList();
+    }
 }

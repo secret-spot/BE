@@ -11,4 +11,6 @@ public interface ScrapRepository extends JpaRepository<Scrap, ScrapId> {
 
     List<Scrap> findAllByUserIdOrderByCreatedAtDesc(Long id);
 
+    List<Scrap> findAllById_UserIdAndId_GuideIdIn(Long userId, List<Long> guideIds);
+
 }
