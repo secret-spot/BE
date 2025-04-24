@@ -1,7 +1,9 @@
 package com.example.SecretSpot.web.controller;
 
 import com.example.SecretSpot.domain.User;
+import com.example.SecretSpot.mapper.GuideMapper;
 import com.example.SecretSpot.service.UserService;
+import com.example.SecretSpot.web.dto.GuideCardItemDto;
 import com.example.SecretSpot.web.dto.ProfileUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,5 +30,10 @@ public class UserController {
     public ResponseEntity<Void> updateProfile(@RequestBody ProfileUpdateRequestDto updateRequestDto, @AuthenticationPrincipal User user) {
         userService.updateUserProfile(updateRequestDto, user.getEmail());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/mypage/guides")
+    public ResponseEntity<List<GuideCardItemDto>> getGuides(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(userService.getUserGuides(user));
     }
 }

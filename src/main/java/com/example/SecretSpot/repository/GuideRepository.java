@@ -1,6 +1,7 @@
 package com.example.SecretSpot.repository;
 
 import com.example.SecretSpot.domain.Guide;
+import com.example.SecretSpot.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +23,6 @@ public interface GuideRepository extends JpaRepository<Guide, Long> {
     Integer countByUserIdAndReviewRatingGreaterThanEqual(Long userId, double v);
 
     List<Guide> findAllByIdIn(List<Long> guideIds);
+
+    List<Guide> findByUser(User user);
 }
