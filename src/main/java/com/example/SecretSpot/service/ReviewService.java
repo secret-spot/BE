@@ -67,13 +67,15 @@ public class ReviewService {
                 .average()
                 .orElse(0.0);
 
+        double formattedAverageRating = Math.round(averageRating * 10) / 10.0;
+
         int totalCount = reviews.size();
 
         if (totalCount >= 5) {
             eventPublisher.publishEvent(new ReviewSummaryEvent(guideId));
         }
 
-        guide.setReviewRating(averageRating);
+        guide.setReviewRating(formattedAverageRating);
         guideRepository.save(guide);
 
         return ReviewCreateResponseDto.builder()
@@ -82,7 +84,7 @@ public class ReviewService {
                 .rating(review.getRating())
                 .createdAt(review.getCreatedAt())
                 .totalReviewCount(totalCount)
-                .averageRating(averageRating)
+                .averageRating(formattedAverageRating)
                 .build();
     }
 
