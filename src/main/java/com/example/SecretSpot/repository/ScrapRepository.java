@@ -13,4 +13,5 @@ public interface ScrapRepository extends JpaRepository<Scrap, ScrapId> {
 
     List<Scrap> findAllById_UserIdAndId_GuideIdIn(Long userId, List<Long> guideIds);
 
+    Boolean existsByUser_IdAndGuide_Id(Long userId, Long guideId);
 }

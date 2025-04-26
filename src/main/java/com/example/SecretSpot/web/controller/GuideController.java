@@ -4,6 +4,7 @@ import com.example.SecretSpot.domain.User;
 import com.example.SecretSpot.service.GuideService;
 import com.example.SecretSpot.service.KeywordService;
 import com.example.SecretSpot.service.RegionService;
+import com.example.SecretSpot.web.dto.DetailedGuideDto;
 import com.example.SecretSpot.web.dto.GuideDto;
 import com.example.SecretSpot.web.dto.GuideListItemDto;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,16 @@ public class GuideController {
         return ResponseEntity.ok(responseDto);
     }
 
+
     @PostMapping("/api/guides/{id}/analyze")
     public ResponseEntity<Object> analyzeGuide(@PathVariable Long id) {
         guideService.analyzeGuide(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/guides/{id}")
+    public ResponseEntity<DetailedGuideDto> getDetailedGuide(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        DetailedGuideDto detailedGuide = guideService.getDetailedGuide(id, user);
+        return ResponseEntity.ok(detailedGuide);
     }
 }

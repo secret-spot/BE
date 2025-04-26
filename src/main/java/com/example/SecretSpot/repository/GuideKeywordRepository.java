@@ -16,4 +16,6 @@ public interface GuideKeywordRepository extends JpaRepository<GuideKeyword, Guid
     boolean existsByGuideAndKeyword(Guide guide, Keyword keyword);
 
     List<Long> guide(Guide guide);
+
+    List<GuideKeyword> findByGuide_Id(Long guideId);
 }
