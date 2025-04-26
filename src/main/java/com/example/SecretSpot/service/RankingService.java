@@ -8,6 +8,7 @@ import com.example.SecretSpot.repository.RankingRepository;
 import com.example.SecretSpot.repository.ReviewRepository;
 import com.example.SecretSpot.repository.UserRepository;
 import com.example.SecretSpot.web.dto.HomeRankingDto;
+import com.example.SecretSpot.web.dto.PlaceDto;
 import com.example.SecretSpot.web.dto.RankingPageDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class RankingService {
      */
     @Transactional
     public void updateRankings() {
+
         List<User> users = userRepository.findAll();
         List<Ranking> newRankings = new ArrayList<>();
 
@@ -67,6 +69,35 @@ public class RankingService {
         }
 
         rankingRepository.saveAll(newRankings);
+    }
+
+    @Transactional
+    public void setPoint(User user, List<PlaceDto> places) {
+        Ranking ranking = rankingRepository.findByUserId(user.getId()).orElseThrow(()->new RuntimeException("유저 랭킹 없음"));
+        Integer totalPoint = ranking.getTotalPoint();
+        Integer guidePoints = ranking.getGuidePoints();
+        Integer rarityPoint = ranking.getRarityPoint();
+
+        ranking.setGuidePoints(guidePoints+2);
+        totalPoint += 2;
+        for (PlaceDto place : places) {
+            Integer reviewNum = place.getReviewNum();
+            if (reviewNum <= 100) {
+                rarityPoint += 3;
+                totalPoint += 3;
+            }
+            else if (reviewNum <= 200) {
+                rarityPoint += 2;
+                totalPoint += 2;
+            }
+            else if (reviewNum <= 300) {
+                rarityPoint += 1;
+                totalPoint += 1;
+            }
+        }
+
+        ranking.setTotalPoint(totalPoint);
+        ranking.setRarityPoint(rarityPoint);
     }
 
     /**

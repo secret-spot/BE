@@ -48,7 +48,12 @@ public class GuideService {
             if (place == null) {
                 place = placeRepository.save(Place.builder().name(placeDto.getName())
                         .address(placeDto.getAddress())
-                        .googleId(placeDto.getGooglePlaceId()).build());
+                        .googleId(placeDto.getGooglePlaceId())
+                        .reviewNum(placeDto.getReviewNum())
+                        .build());
+            }
+            else {
+                place.setReviewNum(placeDto.getReviewNum());
             }
             guidePlaceRepository.save(GuidePlace.builder().guide(savedGuide).place(place).build());
         }
@@ -61,7 +66,7 @@ public class GuideService {
             }
         }
 
-        rankingService.updatePoint(user);
+        rankingService.setPoint(user, guide.getPlaces());
         order = 1;
 
         return savedGuide.getId();
