@@ -27,4 +27,7 @@ public class Place extends BaseTimeEntity {
 
     @Column
     private Byte rating;
+
+    @Column
+    private Integer reviewNum;
 }

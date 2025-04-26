@@ -1,18 +1,18 @@
 package com.example.SecretSpot.service;
 
 import com.example.SecretSpot.common.util.UserUtils;
-import com.example.SecretSpot.domain.Keyword;
-import com.example.SecretSpot.domain.Ranking;
-import com.example.SecretSpot.domain.User;
-import com.example.SecretSpot.domain.UserKeyword;
+import com.example.SecretSpot.domain.*;
 import com.example.SecretSpot.domain.compositekeys.UserKeywordId;
+import com.example.SecretSpot.mapper.GuideMapper;
 import com.example.SecretSpot.repository.*;
+import com.example.SecretSpot.web.dto.GuideCardItemDto;
 import com.example.SecretSpot.web.dto.ProfileUpdateRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,11 +21,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final GuideRepository guideRepository;
-    private final ReviewRepository reviewRepository;
     private final UserKeywordRepository userKeywordRepository;
     private final KeywordRepository keywordRepository;
     private final UserRepository userRepository;
     private final RankingService rankingService;
+    private final ReviewService reviewService;
+    private final GuideMapper guideMapper;
 
     public Map<String, Object> getUserProfile(User user) {
         Long userId = user.getId();
@@ -37,8 +38,8 @@ public class UserService {
                         .map(userKeyword -> userKeyword.getKeyword().getName()).collect(Collectors.toList()),
                 "ranking", ranking.getRanking(),
                 "point", ranking.getTotalPoint(),
-                "userGuides", Optional.ofNullable(guideRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId)).orElse(Collections.emptyList()),
-                "userReviews", Optional.ofNullable(reviewRepository.findByUserId(userId)).orElse(Collections.emptyList())
+                "userGuides", Optional.ofNullable(guideMapper.toCardDtosWithoutScrap(guideRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId))).orElse(Collections.emptyList()),
+                "userReviews", Optional.ofNullable(reviewService.getMyReviews(user)).orElse(Collections.emptyList())
         );
     }
 
@@ -67,5 +68,10 @@ public class UserService {
                 userKeywordRepository.save(userKeyword);
             }
         }
+    }
+
+    public List<GuideCardItemDto> getUserGuides(User user) {
+        List<Guide> userGuides = guideRepository.findByUser(user);
+        return guideMapper.toCardDtosWithoutScrap(userGuides);
     }
 }

@@ -12,4 +12,6 @@ public interface GuideRegionRepository extends JpaRepository<GuideRegion, GuideR
     boolean existsByGuideAndRegion(Guide guide, Region region);
 
     List<GuideRegion> findAllById_guideIdIn(List<Long> guideIds);
+
+    List<GuideRegion> findByGuide_Id(Long guideId);
 }
