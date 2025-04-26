@@ -1,8 +1,9 @@
 package com.example.SecretSpot.web.controller;
 
-import com.example.SecretSpot.domain.Guide;
 import com.example.SecretSpot.domain.User;
 import com.example.SecretSpot.service.HomeService;
+import com.example.SecretSpot.web.dto.GuideCardItemDto;
+import com.example.SecretSpot.web.dto.RegionRecommendDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,14 +21,14 @@ public class HomeController {
 
     @GetMapping("/api/home")
     public ResponseEntity<Map<String, Object>> home(@AuthenticationPrincipal User user) {
-        List<Guide> latestGuide = homeService.getLatestGuide();
-        List<Guide> recommendedGuide = homeService.getRecommendedGuide(user);
-        //List<Region> recommendedRegion = homeService.getRecommendedRegion();
+        List<GuideCardItemDto> latestGuide = homeService.getLatestGuide();
+        List<GuideCardItemDto> recommendedGuide = homeService.getRecommendedGuide(user);
+        List<RegionRecommendDto> recommendedRegion = homeService.getRecommendedRegion(user);
 
         Map<String, Object> model = new HashMap<>();
         model.put("latestGuide", latestGuide);
         model.put("recommendedGuide", recommendedGuide);
-        //model.put("recommendedRegion", recommendedRegion);
+        model.put("recommendedRegion", recommendedRegion);
 
         return ResponseEntity.ok(model);
     }
