@@ -1,6 +1,7 @@
 package com.example.SecretSpot.repository;
 
 import com.example.SecretSpot.domain.Guide;
+import com.example.SecretSpot.domain.Keyword;
 import com.example.SecretSpot.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +26,11 @@ public interface GuideRepository extends JpaRepository<Guide, Long> {
     List<Guide> findAllByIdIn(List<Long> guideIds);
 
     List<Guide> findByUser(User user);
+
+    @Query("""
+    SELECT DISTINCT gk.guide
+    FROM GuideKeyword gk
+    WHERE gk.keyword IN :userKeywords
+    """)
+    List<Guide> findGuidesByUserKeywords(@Param("userKeywords") List<Keyword> userKeywords);
 }
