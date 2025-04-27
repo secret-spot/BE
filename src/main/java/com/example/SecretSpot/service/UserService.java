@@ -10,7 +10,9 @@ import com.example.SecretSpot.web.dto.ProfileUpdateRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ public class UserService {
     private final RankingService rankingService;
     private final ReviewService reviewService;
     private final GuideMapper guideMapper;
+    private final ImageService imageService;
 
     public Map<String, Object> getUserProfile(User user) {
         Long userId = user.getId();
@@ -44,29 +47,32 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserProfile(ProfileUpdateRequestDto requestDto, String email) {
+    public void updateUserProfile(ProfileUpdateRequestDto requestDto, MultipartFile file, String email) throws IOException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new RuntimeException("업데이트할 유저를 찾을 수 없음");
         }
-        if (requestDto.getNickname() != null) {
-            user.setNickname(requestDto.getNickname());
-        }
-        if (requestDto.getProfileImageUrl() != null) {
-            user.setProfileImageUrl(requestDto.getProfileImageUrl());
-        }
-        if (requestDto.getKeywords() != null) {
-            userKeywordRepository.deleteByUserId(user.getId());
-
-            for (String keywordName : requestDto.getKeywords()) {
-                Keyword keyword = keywordRepository.findByName(keywordName)
-                        .orElseThrow(() -> new RuntimeException("잘못된 키워드"));
-                UserKeyword userKeyword = new UserKeyword();
-                userKeyword.setId(new UserKeywordId(keyword.getId(), user.getId()));
-                userKeyword.setUser(user);
-                userKeyword.setKeyword(keyword);
-                userKeywordRepository.save(userKeyword);
+        if (requestDto != null) {
+            if (requestDto.getNickname() != null) {
+                user.setNickname(requestDto.getNickname());
             }
+            if (requestDto.getKeywords() != null) {
+                userKeywordRepository.deleteByUserId(user.getId());
+
+                for (String keywordName : requestDto.getKeywords()) {
+                    Keyword keyword = keywordRepository.findByName(keywordName)
+                            .orElseThrow(() -> new RuntimeException("잘못된 키워드"));
+                    UserKeyword userKeyword = new UserKeyword();
+                    userKeyword.setId(new UserKeywordId(keyword.getId(), user.getId()));
+                    userKeyword.setUser(user);
+                    userKeyword.setKeyword(keyword);
+                    userKeywordRepository.save(userKeyword);
+                }
+            }
+        }
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = imageService.uploadImage(file);
+            user.setProfileImageUrl(imageUrl);
         }
     }
 
