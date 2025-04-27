@@ -30,12 +30,4 @@ public class ImageService {
                     .setContentType(type).build(), file.getBytes());
             return "https://storage.googleapis.com/" + bucketName + "/" + gcsFilename;
     }
-
-    public String getFile(String filename) {
-        Blob blob = storage.get(BlobId.of(bucketName, filename));
-        if (blob == null || !blob.exists()) {
-            throw new IllegalArgumentException("gcs에서 파일을 찾을 수 없음");
-        }
-        return "https://storage.googleapis.com/" + bucketName + "/" + filename;
-    }
 }
