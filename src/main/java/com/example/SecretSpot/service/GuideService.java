@@ -6,7 +6,9 @@ import com.example.SecretSpot.repository.*;
 import com.example.SecretSpot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,9 +33,10 @@ public class GuideService {
     private final RankingService rankingService;
     private final UserRepository userRepository;
     private final ScrapRepository scrapRepository;
+    private final ImageService imageService;
     int order = 1;
 
-    public Long saveGuide(GuideDto guide, User user) {
+    public Long saveGuide(GuideDto guide, List<MultipartFile> images, User user) throws IOException {
         // Guide 저장
         LocalDate startDate = guide.getStartDate();
         LocalDate endDate = guide.getEndDate();
@@ -58,11 +61,10 @@ public class GuideService {
             guidePlaceRepository.save(GuidePlace.builder().guide(savedGuide).place(place).build());
         }
 
-        for (String image : guide.getImages()) {
-            //System.out.println("image = " + image);
-            //System.out.println("guideImageRepository.existsByGuideAndUrl(savedGuide, image = " + guideImageRepository.existsByGuideAndUrl(savedGuide, image));
-            if (!guideImageRepository.existsByGuideAndUrl(savedGuide, image)) {
-                guideImageRepository.save(GuideImage.builder().guide(savedGuide).url(image).sortOrder(order++).build());
+        for (MultipartFile image : images) {
+            String imageUrl = imageService.uploadImage(image);
+            if (!guideImageRepository.existsByGuideAndUrl(savedGuide, imageUrl)) {
+                guideImageRepository.save(GuideImage.builder().guide(savedGuide).url(imageUrl).sortOrder(order++).build());
             }
         }
 

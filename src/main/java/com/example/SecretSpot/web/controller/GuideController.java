@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,8 +25,10 @@ public class GuideController {
     private final RegionService regionService;
 
     @PostMapping("/api/guides")
-    public ResponseEntity<Long> createGuide(@RequestBody GuideDto guide, @AuthenticationPrincipal User user) {
-        Long guideId = guideService.saveGuide(guide, user);
+    public ResponseEntity<Long> createGuide(@RequestPart("data") GuideDto guide,
+                                            @RequestPart("images") List<MultipartFile> images,
+                                            @AuthenticationPrincipal User user) throws IOException {
+        Long guideId = guideService.saveGuide(guide, images, user);
         return ResponseEntity.ok(guideId);
     }
 
