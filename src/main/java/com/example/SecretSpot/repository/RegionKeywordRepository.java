@@ -15,4 +15,6 @@ public interface RegionKeywordRepository extends JpaRepository<RegionKeyword, Re
     List<Region> findRegionsByUserKeywordsOrderByMatchCount(@Param("keywords") List<Keyword> keywords);
 
     List<RegionKeyword> findByRegion(Region region);
+
+    Boolean existsByRegionAndKeyword(Region region, Keyword keyword);
 }
