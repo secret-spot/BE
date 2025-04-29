@@ -5,14 +5,14 @@ import com.example.SecretSpot.mapper.GuideMapper;
 import com.example.SecretSpot.repository.*;
 import com.example.SecretSpot.web.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +34,10 @@ public class GuideService {
     private final UserRepository userRepository;
     private final ScrapRepository scrapRepository;
     private final ImageService imageService;
+    private final RegionKeywordRepository regionKeywordRepository;
     int order = 1;
+
+    private final String API_URL = "https://secret-spot-456800.du.r.appspot.com/api/v1/keywords/";
 
     public Long saveGuide(GuideDto guide, List<MultipartFile> images, User user) throws IOException {
         // Guide 저장
@@ -76,9 +79,17 @@ public class GuideService {
 
     public void analyzeGuide(Long id) {
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new RuntimeException("가이드 없음"));
-        /**
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Map<String, Object> body = new HashMap<>();
+        body.put("prompt", guide.getContent());
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
          // FastAPI 호출
-         AnalyzeResponseDto aiResponse;
+        AnalyzeResponseDto aiResponse = restTemplate.exchange(API_URL, HttpMethod.POST, requestEntity, AnalyzeResponseDto.class).getBody();
+        System.out.println("aiResponse = " + aiResponse);
 
          // 테스트용
          List<String> aiKeywords = aiResponse.getKeywords();
@@ -88,15 +99,21 @@ public class GuideService {
          List<Region> regions = regionService.getRegions(aiRegions);
 
          for (Keyword keyword : keywords) {
-         if (!guideKeywordRepository.existsByGuideAndKeyword(guide, keyword)) {
-         guideKeywordRepository.save(GuideKeyword.builder().guide(guide).keyword(keyword).build());
-         }
+            if (!guideKeywordRepository.existsByGuideAndKeyword(guide, keyword)) {
+                guideKeywordRepository.save(GuideKeyword.builder().guide(guide).keyword(keyword).build());
+            }
          }
          for (Region region : regions) {
-         if (!guideRegionRepository.existsByGuideAndRegion(guide, region)) {
-         guideRegionRepository.save(GuideRegion.builder().guide(guide).region(region).build());
+            if (!guideRegionRepository.existsByGuideAndRegion(guide, region)) {
+                guideRegionRepository.save(GuideRegion.builder().guide(guide).region(region).build());
+            }
+            for (Keyword keyword : keywords) {
+                if (!regionKeywordRepository.existsByRegionAndKeyword(region, keyword)) {
+                    System.out.println("keyword for문 진입");
+                    regionKeywordRepository.save(RegionKeyword.builder().keyword(keyword).region(region).build());
+                }
+            }
          }
-         } **/
     }
 
     /**
