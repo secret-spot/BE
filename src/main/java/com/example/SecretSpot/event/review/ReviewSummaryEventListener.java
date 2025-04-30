@@ -1,5 +1,6 @@
 package com.example.SecretSpot.event.review;
 
+import com.example.SecretSpot.client.ReviewClient;
 import com.example.SecretSpot.domain.Guide;
 import com.example.SecretSpot.domain.Review;
 import com.example.SecretSpot.repository.GuideRepository;
@@ -14,10 +15,12 @@ import java.util.List;
 public class ReviewSummaryEventListener {
     private final ReviewRepository reviewRepository;
     private final GuideRepository guideRepository;
+    private final ReviewClient reviewClient;
 
-    public ReviewSummaryEventListener(ReviewRepository reviewRepository, GuideRepository guideRepository) {
+    public ReviewSummaryEventListener(ReviewRepository reviewRepository, GuideRepository guideRepository, ReviewClient reviewClient) {
         this.reviewRepository = reviewRepository;
         this.guideRepository = guideRepository;
+        this.reviewClient = reviewClient;
     }
 
     @Async
@@ -25,19 +28,25 @@ public class ReviewSummaryEventListener {
     public void handleReviewSummary(ReviewSummaryEvent event) {
         Long guideId = event.guideId();
 
+        Guide guide = guideRepository.findById(guideId)
+                .orElseThrow(() -> new IllegalArgumentException("Not Found Guide, id=" + guideId));
+
         List<String> contents = reviewRepository.findAllByGuideId(guideId)
                 .stream()
                 .map(Review::getContent)
                 .toList();
 
-//        String summary = summarizationService.summarize(contents);
-        String summary = "이벤트 발생 여부 테스트용";
+        String prompt = String.join(",", contents);
 
-        Guide guide = guideRepository.findById(guideId)
-                .orElseThrow(() -> new IllegalArgumentException("Not Found Guide, id=" + guideId));
-
-        guide.setSummaryReview(summary);
-
-        guideRepository.save(guide);
+        reviewClient.summarizeReview(prompt)
+                .subscribe(
+                        summary -> {
+                            guide.setSummaryReview(summary);
+                            guideRepository.save(guide);
+                        },
+                        err -> {
+                            System.err.println("요약 API 호출 실패: " + err.getMessage());
+                        }
+                );
     }
 }
