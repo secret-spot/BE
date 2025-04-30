@@ -28,9 +28,20 @@ public interface GuideRepository extends JpaRepository<Guide, Long> {
     List<Guide> findByUser(User user);
 
     @Query("""
-    SELECT DISTINCT gk.guide
-    FROM GuideKeyword gk
-    WHERE gk.keyword IN :userKeywords
-    """)
+            SELECT DISTINCT gk.guide
+            FROM GuideKeyword gk
+            WHERE gk.keyword IN :userKeywords
+            """)
     List<Guide> findGuidesByUserKeywords(@Param("userKeywords") List<Keyword> userKeywords);
+
+    @Query("""
+            SELECT DISTINCT g FROM Guide g
+            LEFT JOIN g.keywords k
+            LEFT JOIN k.keyword kw
+            WHERE g.title LIKE CONCAT('%', :keyword, '%')
+            OR g.content LIKE CONCAT('%', :keyword, '%')
+            OR kw.name LIKE CONCAT('%', :keyword, '%')
+            """)
+    List<Guide> searchByKeyword(@Param("keyword") String keyword);
+
 }
