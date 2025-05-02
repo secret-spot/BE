@@ -23,9 +23,13 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            Integer exceptionStatus = (Integer) request.getAttribute("exceptionStatus");
+                            String exceptionMessage = (String) request.getAttribute("exceptionMessage");
+                            if (exceptionStatus == null) exceptionStatus = HttpServletResponse.SC_UNAUTHORIZED;
+                            if (exceptionMessage == null) exceptionMessage = "Unauthorized";
+                            response.setStatus(exceptionStatus);
                             response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                            response.getWriter().write("{\"error\": \"" + exceptionMessage + "\"}");
                         }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/css/**", "/images/**", "/js/**").permitAll()

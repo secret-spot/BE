@@ -25,16 +25,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = resolveToken(request);
-        if (token != null && jwtProvider.validateToken(token)) {
-            // JWT의 payload에 들어있는 subject인 email 꺼냄
-            String email = jwtProvider.getEmailFromToken(token);
-            User user = userRepository.findByEmail(email);
-            // 인증된 사용자로 등록
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            String token = resolveToken(request);
+            if (token != null && jwtProvider.validateToken(token)) {
+                // JWT의 payload에 들어있는 subject인 email 꺼냄
+                String email = jwtProvider.getEmailFromToken(token);
+                User user = userRepository.findByEmail(email);
+                // 인증된 사용자로 등록
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            request.setAttribute("exceptionStatus", HttpServletResponse.SC_UNAUTHORIZED);
+            request.setAttribute("exceptionMessage", e.getMessage());
+            throw new RuntimeException("JWT Validation Failed");
         }
-        filterChain.doFilter(request, response);
     }
 
     private String resolveToken(HttpServletRequest request) {
