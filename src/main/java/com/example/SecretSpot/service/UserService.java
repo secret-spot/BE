@@ -26,6 +26,7 @@ public class UserService {
     private final UserKeywordRepository userKeywordRepository;
     private final KeywordRepository keywordRepository;
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
     private final RankingService rankingService;
     private final ReviewService reviewService;
     private final GuideMapper guideMapper;
@@ -39,10 +40,12 @@ public class UserService {
                 "nickname", UserUtils.getNicknameOrName(user),
                 "keyword", userKeywordRepository.findByUserId(userId).stream()
                         .map(userKeyword -> userKeyword.getKeyword().getName()).collect(Collectors.toList()),
-                "ranking", ranking.getRanking(),
+                "ranking", rankingService.getMyRanking(user),
                 "point", ranking.getTotalPoint(),
                 "userGuides", Optional.ofNullable(guideMapper.toCardDtosWithoutScrap(guideRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId))).orElse(Collections.emptyList()),
-                "userReviews", Optional.ofNullable(reviewService.getMyReviews(user)).orElse(Collections.emptyList())
+                "userReviews", Optional.ofNullable(reviewService.getMyReviews(user)).orElse(Collections.emptyList()),
+                "guideNum", guideRepository.countByUserId(userId),
+                "reviewNum", reviewRepository.countByUserId(userId)
         );
     }
 
