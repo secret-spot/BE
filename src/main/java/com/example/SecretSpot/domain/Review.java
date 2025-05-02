@@ -29,6 +29,6 @@ public class Review extends BaseTimeEntity {
     private byte rating = 5;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 }

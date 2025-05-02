@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "guides")
@@ -35,7 +36,7 @@ public class Guide extends BaseTimeEntity {
     private String title;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
     @Lob
@@ -48,4 +49,7 @@ public class Guide extends BaseTimeEntity {
     @Column(name = "review_rating", nullable = false)
     @Builder.Default
     private Double reviewRating = 0.0;
+
+    @OneToMany(mappedBy = "guide", fetch = FetchType.LAZY)
+    private List<GuideKeyword> keywords;
 }

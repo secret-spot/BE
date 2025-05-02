@@ -9,8 +9,8 @@ public class RegionDto {
     private String country;
     private String region;
 
-    public RegionDto(String country, String region) {
-        this.country = country;
-        this.region = region;
+    public RegionDto(String key, String value) {
+        this.country = key;
+        this.region = value;
     }
 }

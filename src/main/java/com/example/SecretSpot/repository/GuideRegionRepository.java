@@ -11,6 +11,8 @@ import java.util.List;
 public interface GuideRegionRepository extends JpaRepository<GuideRegion, GuideRegionId> {
     boolean existsByGuideAndRegion(Guide guide, Region region);
 
+    List<GuideRegion> findByRegion_Id(Long regionId);
+
     List<GuideRegion> findAllById_guideIdIn(List<Long> guideIds);
 
     List<GuideRegion> findByGuide_Id(Long guideId);
