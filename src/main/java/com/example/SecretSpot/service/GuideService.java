@@ -28,12 +28,7 @@ public class GuideService {
     private final GuideKeywordRepository guideKeywordRepository;
     private final RegionService regionService;
     private final KeywordService keywordService;
-    private final GuideKeywordService guideKeywordService;
-    private final GuideRegionService guideRegionService;
-    private final ScrapService scrapService;
     private final GuideMapper guideMapper;
-    private final RankingService rankingService;
-    private final UserRepository userRepository;
     private final ScrapRepository scrapRepository;
     private final ImageService imageService;
     private final RegionKeywordRepository regionKeywordRepository;
@@ -158,7 +153,8 @@ public class GuideService {
         Boolean isScraped = scrapRepository.existsByUser_IdAndGuide_Id(user.getId(), id);
         return DetailedGuideDto.builder().images(guideImages).content(detailedGuide.getContent()).startDate(detailedGuide.getStartDate())
                 .endDate(detailedGuide.getEndDate()).title(detailedGuide.getTitle()).places(guidePlaces).keywords(keywords).regions(regions)
-                .reviewRating(String.format("%.1f", detailedGuide.getReviewRating())).isMyGuide(isMyGuide).isScraped(isScraped).build();
+                .reviewRating(String.format("%.1f", detailedGuide.getReviewRating())).isMyGuide(isMyGuide).isScraped(isScraped)
+                .userImage(user.getProfileImageUrl()).userName(user.getName()).build();
     }
 
     public int calculateRarityPoint(List<PlaceDto> places) {
