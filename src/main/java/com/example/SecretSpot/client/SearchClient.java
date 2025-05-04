@@ -1,9 +1,6 @@
 package com.example.SecretSpot.client;
 
-import com.example.SecretSpot.web.dto.CheckIsRegionResponseDto;
-import com.example.SecretSpot.web.dto.CreateEtiquetteResponseDto;
-import com.example.SecretSpot.web.dto.NearbyRegionItemDto;
-import com.example.SecretSpot.web.dto.NearbyRegionRecommendResponseDto;
+import com.example.SecretSpot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,7 +16,7 @@ public class SearchClient {
     /**
      * 검색어가 지역명인지 구분하는 API
      */
-    public Boolean checkIsRegion(String prompt) {
+    public CheckIsRegionItemDto checkIsRegion(String prompt) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/api/v1/search/")
@@ -27,7 +24,7 @@ public class SearchClient {
                         .build())
                 .retrieve()
                 .bodyToMono(CheckIsRegionResponseDto.class)
-                .map(CheckIsRegionResponseDto::getIsRegion)
+                .map(CheckIsRegionResponseDto::getResult)
                 .block();
     }
 

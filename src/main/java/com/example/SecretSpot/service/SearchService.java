@@ -30,7 +30,7 @@ public class SearchService {
 
     public SearchResponseDto searchGuides(String query) {
         String trimmedQuery = query.trim();
-        Boolean isRegion = searchClient.checkIsRegion(trimmedQuery);
+        Boolean isRegion = searchClient.checkIsRegion(trimmedQuery).getIsRegion();
 
         List<GuideListItemDto> formattedGuides = null;
 

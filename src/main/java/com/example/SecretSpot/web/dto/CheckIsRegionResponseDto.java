@@ -7,5 +7,5 @@ import lombok.Getter;
 @Builder
 public class CheckIsRegionResponseDto {
     private String prompt;
-    private Boolean isRegion;
+    private CheckIsRegionItemDto result;
 }
