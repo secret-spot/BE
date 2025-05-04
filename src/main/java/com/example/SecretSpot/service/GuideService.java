@@ -1,5 +1,6 @@
 package com.example.SecretSpot.service;
 
+import com.example.SecretSpot.common.util.UserUtils;
 import com.example.SecretSpot.domain.*;
 import com.example.SecretSpot.mapper.GuideMapper;
 import com.example.SecretSpot.repository.*;
@@ -149,12 +150,26 @@ public class GuideService {
                             .country(guideRegion.getRegion().getCountry()).build();
                 }).toList();
 
-        Boolean isMyGuide = (detailedGuide.getUser().getId().equals(user.getId())) ? Boolean.TRUE : Boolean.FALSE;
+        User writer = detailedGuide.getUser();
+
+        Boolean isMyGuide = (writer.getId().equals(user.getId())) ? Boolean.TRUE : Boolean.FALSE;
         Boolean isScraped = scrapRepository.existsByUser_IdAndGuide_Id(user.getId(), id);
-        return DetailedGuideDto.builder().images(guideImages).content(detailedGuide.getContent()).startDate(detailedGuide.getStartDate())
-                .endDate(detailedGuide.getEndDate()).title(detailedGuide.getTitle()).places(guidePlaces).keywords(keywords).regions(regions)
-                .reviewRating(String.format("%.1f", detailedGuide.getReviewRating())).isMyGuide(isMyGuide).isScraped(isScraped)
-                .userImage(user.getProfileImageUrl()).userName(user.getName()).build();
+
+        return DetailedGuideDto.builder()
+                .isMyGuide(isMyGuide)
+                .isScraped(isScraped)
+                .images(guideImages)
+                .title(detailedGuide.getTitle())
+                .userImage(writer.getProfileImageUrl())
+                .userName(UserUtils.getNicknameOrName(writer))
+                .startDate(detailedGuide.getStartDate())
+                .endDate(detailedGuide.getEndDate())
+                .keywords(keywords)
+                .regions(regions)
+                .reviewRating(String.format("%.1f", detailedGuide.getReviewRating()))
+                .content(detailedGuide.getContent())
+                .places(guidePlaces)
+                .build();
     }
 
     public int calculateRarityPoint(List<PlaceDto> places) {
