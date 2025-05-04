@@ -20,4 +20,6 @@ public class DetailedGuideDto {
     private Boolean isMyGuide;
     private Boolean isScraped;
     private String reviewRating;   // 소수점 첫째자리까지만 반환 위해 String
+    private String userImage;
+    private String userName;
 }
