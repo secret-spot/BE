@@ -5,7 +5,10 @@ import com.example.SecretSpot.mapper.GuideMapper;
 import com.example.SecretSpot.repository.*;
 import com.example.SecretSpot.web.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,17 +37,22 @@ public class GuideService {
     private final ScrapRepository scrapRepository;
     private final ImageService imageService;
     private final RegionKeywordRepository regionKeywordRepository;
-    int order = 1;
-
     private final String API_URL = "https://secret-spot-456800.du.r.appspot.com/api/v1/keywords/";
+    int order = 1;
 
     public Long saveGuide(GuideDto guide, List<MultipartFile> images, User user) throws IOException {
         // Guide 저장
         LocalDate startDate = guide.getStartDate();
         LocalDate endDate = guide.getEndDate();
-        Guide savedGuide = guideRepository.save(Guide.builder().title(guide.getTitle()).user(user)
-                .content(guide.getContent()).startDate(startDate)
-                .endDate(endDate).build());
+        Guide savedGuide = guideRepository.save(
+                Guide.builder()
+                        .title(guide.getTitle())
+                        .user(user)
+                        .content(guide.getContent())
+                        .startDate(startDate)
+                        .endDate(endDate)
+                        .rarityPoint(calculateRarityPoint(guide.getPlaces()))
+                        .build());
         guideRepository.flush();
 
         // GuidePlace 저장
@@ -57,8 +64,7 @@ public class GuideService {
                         .googleId(placeDto.getGooglePlaceId())
                         .reviewNum(placeDto.getReviewNum())
                         .build());
-            }
-            else {
+            } else {
                 place.setReviewNum(placeDto.getReviewNum());
             }
             guidePlaceRepository.save(GuidePlace.builder().guide(savedGuide).place(place).build());
@@ -71,7 +77,6 @@ public class GuideService {
             }
         }
 
-        rankingService.setPoint(user, guide.getPlaces());
         order = 1;
 
         return savedGuide.getId();
@@ -87,23 +92,23 @@ public class GuideService {
         body.put("prompt", guide.getContent());
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-         // FastAPI 호출
+        // FastAPI 호출
         AnalyzeResponseDto aiResponse = restTemplate.exchange(API_URL, HttpMethod.POST, requestEntity, AnalyzeResponseDto.class).getBody();
         System.out.println("aiResponse = " + aiResponse);
 
-         // 테스트용
-         List<String> aiKeywords = aiResponse.getKeywords();
-         List<RegionDto> aiRegions = aiResponse.getRegions();
+        // 테스트용
+        List<String> aiKeywords = aiResponse.getKeywords();
+        List<RegionDto> aiRegions = aiResponse.getRegions();
 
-         List<Keyword> keywords = keywordService.getKeywords(aiKeywords);
-         List<Region> regions = regionService.getRegions(aiRegions);
+        List<Keyword> keywords = keywordService.getKeywords(aiKeywords);
+        List<Region> regions = regionService.getRegions(aiRegions);
 
-         for (Keyword keyword : keywords) {
+        for (Keyword keyword : keywords) {
             if (!guideKeywordRepository.existsByGuideAndKeyword(guide, keyword)) {
                 guideKeywordRepository.save(GuideKeyword.builder().guide(guide).keyword(keyword).build());
             }
-         }
-         for (Region region : regions) {
+        }
+        for (Region region : regions) {
             if (!guideRegionRepository.existsByGuideAndRegion(guide, region)) {
                 guideRegionRepository.save(GuideRegion.builder().guide(guide).region(region).build());
             }
@@ -113,7 +118,7 @@ public class GuideService {
                     regionKeywordRepository.save(RegionKeyword.builder().keyword(keyword).region(region).build());
                 }
             }
-         }
+        }
     }
 
     /**
@@ -131,7 +136,7 @@ public class GuideService {
 
         List<GuideImage> images = guideImageRepository.findByGuide_Id(id);
         images.sort(Comparator.comparing(GuideImage::getSortOrder));
-        for(GuideImage image : images) {
+        for (GuideImage image : images) {
             guideImages.add(image.getUrl());
         }
 
@@ -154,5 +159,20 @@ public class GuideService {
         return DetailedGuideDto.builder().images(guideImages).content(detailedGuide.getContent()).startDate(detailedGuide.getStartDate())
                 .endDate(detailedGuide.getEndDate()).title(detailedGuide.getTitle()).places(guidePlaces).keywords(keywords).regions(regions)
                 .reviewRating(String.format("%.1f", detailedGuide.getReviewRating())).isMyGuide(isMyGuide).isScraped(isScraped).build();
+    }
+
+    public int calculateRarityPoint(List<PlaceDto> places) {
+        int rarityPoint = 0;
+        for (PlaceDto place : places) {
+            Integer reviewNum = place.getReviewNum();
+            if (reviewNum <= 100) {
+                rarityPoint += 3;
+            } else if (reviewNum <= 200) {
+                rarityPoint += 2;
+            } else if (reviewNum <= 300) {
+                rarityPoint += 1;
+            }
+        }
+        return rarityPoint;
     }
 }
