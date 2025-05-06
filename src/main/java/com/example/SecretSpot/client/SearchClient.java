@@ -54,12 +54,23 @@ public class SearchClient {
                         .build())
                 .bodyValue(new promptRequestDto(prompt))
                 .retrieve()
-                .bodyToMono(NearbyRegionRecommendResponseDto.class)
-                .map(NearbyRegionRecommendResponseDto::getRecommendations)
                 .bodyToMono(RegionRecommendResponseDto.class)
                 .map(RegionRecommendResponseDto::getRecommendations)
                 .block();
     }
+
+    /**
+     * 근처의 관광지를 추천하는 API
+     */
+    public List<PlaceRecommendItemDto> recommendNearbyPlaces(String prompt) {
+        return webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/v1/recommend/place/")
+                        .build())
+                .bodyValue(new promptRequestDto(prompt))
+                .retrieve()
+                .bodyToMono(PlaceRecommendResponseDto.class)
+                .map(PlaceRecommendResponseDto::getRecommendations)
                 .block();
     }
 }

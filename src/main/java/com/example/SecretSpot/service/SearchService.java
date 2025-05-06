@@ -8,9 +8,11 @@ import com.example.SecretSpot.mapper.GuideMapper;
 import com.example.SecretSpot.repository.GuideRegionRepository;
 import com.example.SecretSpot.repository.GuideRepository;
 import com.example.SecretSpot.repository.RegionRepository;
+import com.example.SecretSpot.web.dto.AI.CheckIsRegionItemDto;
+import com.example.SecretSpot.web.dto.AI.PlaceRecommendItemDto;
+import com.example.SecretSpot.web.dto.AI.RegionRecommendItemDto;
+import com.example.SecretSpot.web.dto.AI.RegionRecommendWithCommentDto;
 import com.example.SecretSpot.web.dto.GuideListItemDto;
-import com.example.SecretSpot.web.dto.NearbyRegionItemDto;
-import com.example.SecretSpot.web.dto.RegionRecommendWithCommentDto;
 import com.example.SecretSpot.web.dto.SearchResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +32,13 @@ public class SearchService {
 
     public SearchResponseDto searchGuides(String query) {
         String trimmedQuery = query.trim();
-        Boolean isRegion = searchClient.checkIsRegion(trimmedQuery).getIsRegion();
+        CheckIsRegionItemDto checkIsRegionItemDto = searchClient.checkIsRegion(trimmedQuery);
+        Boolean isRegion = checkIsRegionItemDto.getIsRegion();
+        Boolean isPlace = checkIsRegionItemDto.getIsPlace();
 
         List<GuideListItemDto> formattedGuides = null;
 
-        if (isRegion) {
+        if (isRegion) { //지명일 경우
             Region region = regionRepository.findByName(trimmedQuery).orElse(null);
 
             //지역이긴 하지만 DB에 없는 지역일 경우
@@ -61,7 +65,7 @@ public class SearchService {
             }
 
             //근처 소도시
-            List<NearbyRegionItemDto> nearbyCities = searchClient.recommendNearbyCities(trimmedQuery);
+            List<RegionRecommendItemDto> nearbyCities = searchClient.recommendNearbyCities(trimmedQuery);
             List<RegionRecommendWithCommentDto> formattedNearbyCities = nearbyCities.stream()
                     .map(item -> RegionRecommendWithCommentDto.builder()
                             .region(item.getSmallCity())
@@ -72,16 +76,33 @@ public class SearchService {
             return SearchResponseDto.builder()
                     .keyword(trimmedQuery)
                     .isRegion(true)
+                    .isPlace(false)
                     .etiquette(etiquette)
-                    .recommendations(formattedNearbyCities)
+                    .recommendedRegions(formattedNearbyCities)
                     .guides(formattedGuides)
                     .build();
-        } else {
+
+        } else if (isPlace) { //장소명일 경우
+            String etiquette = searchClient.createEtiquette(trimmedQuery);
+            List<PlaceRecommendItemDto> nearbyPlaces = searchClient.recommendNearbyPlaces(trimmedQuery);
+            List<Guide> guides = guideRepository.searchByPlace(trimmedQuery);
+            formattedGuides = guideMapper.toListDtos(guides);
+            return SearchResponseDto.builder()
+                    .keyword(trimmedQuery)
+                    .isRegion(false)
+                    .isPlace(true)
+                    .etiquette(etiquette)
+                    .recommendedPlaces(nearbyPlaces)
+                    .guides(formattedGuides)
+                    .build();
+
+        } else { //지명, 장소명 둘 다 아닐 경우
             List<Guide> guides = guideRepository.searchByKeyword(trimmedQuery);
             formattedGuides = guideMapper.toListDtos(guides);
             return SearchResponseDto.builder()
                     .keyword(trimmedQuery)
                     .isRegion(false)
+                    .isPlace(false)
                     .guides(formattedGuides)
                     .build();
         }
