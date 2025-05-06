@@ -1,6 +1,6 @@
 package com.example.SecretSpot.client;
 
-import com.example.SecretSpot.web.dto.*;
+import com.example.SecretSpot.web.dto.AI.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,11 +17,11 @@ public class SearchClient {
      * 검색어가 지역명인지 구분하는 API
      */
     public CheckIsRegionItemDto checkIsRegion(String prompt) {
-        return webClient.get()
+        return webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/api/v1/search/")
-                        .queryParam("prompt", prompt)
                         .build())
+                .bodyValue(new promptRequestDto(prompt))
                 .retrieve()
                 .bodyToMono(CheckIsRegionResponseDto.class)
                 .map(CheckIsRegionResponseDto::getResult)
@@ -30,14 +30,14 @@ public class SearchClient {
 
 
     /**
-     * 검색어가 지역명일 경우 그 지역의 에티켓을 생성하는 API
+     * 지역명/장소명을 전달하면 그 지역의 에티켓을 생성하는 API
      */
     public String createEtiquette(String prompt) {
-        return webClient.get()
+        return webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/api/v1/etiquette/")
-                        .queryParam("prompt", prompt)
                         .build())
+                .bodyValue(new promptRequestDto(prompt))
                 .retrieve()
                 .bodyToMono(CreateEtiquetteResponseDto.class)
                 .map(CreateEtiquetteResponseDto::getContent)
@@ -47,15 +47,30 @@ public class SearchClient {
     /**
      * 근처의 소도시를 추천하는 API
      */
-    public List<NearbyRegionItemDto> recommendNearbyCities(String prompt) {
-        return webClient.get()
+    public List<RegionRecommendItemDto> recommendNearbyCities(String prompt) {
+        return webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/api/v1/recommend/")
-                        .queryParam("prompt", prompt)
                         .build())
+                .bodyValue(new promptRequestDto(prompt))
                 .retrieve()
-                .bodyToMono(NearbyRegionRecommendResponseDto.class)
-                .map(NearbyRegionRecommendResponseDto::getRecommendations)
+                .bodyToMono(RegionRecommendResponseDto.class)
+                .map(RegionRecommendResponseDto::getRecommendations)
+                .block();
+    }
+
+    /**
+     * 근처의 관광지를 추천하는 API
+     */
+    public List<PlaceRecommendItemDto> recommendNearbyPlaces(String prompt) {
+        return webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/v1/recommend/place/")
+                        .build())
+                .bodyValue(new promptRequestDto(prompt))
+                .retrieve()
+                .bodyToMono(PlaceRecommendResponseDto.class)
+                .map(PlaceRecommendResponseDto::getRecommendations)
                 .block();
     }
 }

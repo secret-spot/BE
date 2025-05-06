@@ -52,4 +52,7 @@ public class Guide extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "guide", fetch = FetchType.LAZY)
     private List<GuideKeyword> keywords;
+
+    @OneToMany(mappedBy = "guide", fetch = FetchType.LAZY)
+    private List<GuidePlace> places;
 }

@@ -1,5 +1,6 @@
-package com.example.SecretSpot.web.dto;
+package com.example.SecretSpot.web.dto.AI;
 
+import com.example.SecretSpot.web.dto.RegionDto;
 import lombok.Data;
 
 import java.util.List;

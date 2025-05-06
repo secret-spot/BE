@@ -1,4 +1,4 @@
-package com.example.SecretSpot.web.dto;
+package com.example.SecretSpot.web.dto.AI;
 
 import lombok.Builder;
 import lombok.Getter;

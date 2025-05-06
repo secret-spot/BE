@@ -44,4 +44,13 @@ public interface GuideRepository extends JpaRepository<Guide, Long> {
             """)
     List<Guide> searchByKeyword(@Param("keyword") String keyword);
 
+    @Query("""
+            SELECT DISTINCT g FROM Guide g
+            LEFT JOIN g.places p
+            LEFT JOIN p.place pl
+            WHERE g.title LIKE CONCAT('%', :place, '%')
+            OR g.content LIKE CONCAT('%', :place, '%')
+            OR pl.name LIKE CONCAT('%', :place, '%')
+            """)
+    List<Guide> searchByPlace(@Param("place") String place);
 }
