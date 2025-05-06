@@ -4,6 +4,7 @@ import com.example.SecretSpot.common.util.UserUtils;
 import com.example.SecretSpot.domain.*;
 import com.example.SecretSpot.mapper.GuideMapper;
 import com.example.SecretSpot.repository.*;
+import com.example.SecretSpot.web.dto.AI.AnalyzeResponseDto;
 import com.example.SecretSpot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
