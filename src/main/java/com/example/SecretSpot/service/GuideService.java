@@ -34,7 +34,7 @@ public class GuideService {
     private final ScrapRepository scrapRepository;
     private final ImageService imageService;
     private final RegionKeywordRepository regionKeywordRepository;
-    private final String API_URL = "https://secret-spot-456800.du.r.appspot.com/api/v1/keywords/";
+    private final String API_URL = "https://basic-radius-459414-h8.du.r.appspot.com/api/v1/keywords/";
     int order = 1;
 
     public Long saveGuide(GuideDto guide, List<MultipartFile> images, User user) throws IOException {
