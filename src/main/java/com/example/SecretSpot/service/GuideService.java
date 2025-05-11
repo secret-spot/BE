@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -41,6 +43,7 @@ public class GuideService {
         // Guide 저장
         LocalDate startDate = guide.getStartDate();
         LocalDate endDate = guide.getEndDate();
+        int duration = (int) ChronoUnit.DAYS.between(startDate, endDate);
         Guide savedGuide = guideRepository.save(
                 Guide.builder()
                         .title(guide.getTitle())
@@ -49,6 +52,7 @@ public class GuideService {
                         .startDate(startDate)
                         .endDate(endDate)
                         .rarityPoint(calculateRarityPoint(guide.getPlaces()))
+                        .durationDays(duration)
                         .build());
         guideRepository.flush();
 
@@ -91,7 +95,7 @@ public class GuideService {
 
         // FastAPI 호출
         AnalyzeResponseDto aiResponse = restTemplate.exchange(API_URL, HttpMethod.POST, requestEntity, AnalyzeResponseDto.class).getBody();
-        System.out.println("aiResponse = " + aiResponse);
+        //System.out.println("aiResponse = " + aiResponse);
 
         // 테스트용
         List<String> aiKeywords = aiResponse.getKeywords();
@@ -111,7 +115,6 @@ public class GuideService {
             }
             for (Keyword keyword : keywords) {
                 if (!regionKeywordRepository.existsByRegionAndKeyword(region, keyword)) {
-                    System.out.println("keyword for문 진입");
                     regionKeywordRepository.save(RegionKeyword.builder().keyword(keyword).region(region).build());
                 }
             }
