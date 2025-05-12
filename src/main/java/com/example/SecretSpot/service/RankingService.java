@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ public class RankingService {
 
         List<User> users = userRepository.findAll();
         List<Ranking> newRankings = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
 
         for (User user : users) {
             Long userId = user.getId();
@@ -56,6 +58,7 @@ public class RankingService {
                     .rarityPoint(rarityPoint)
                     .guideRatingPoint(guideRatingPoint)
                     .totalPoint(totalPoint)
+                    .createdAt(now)
                     .build();
             newRankings.add(ranking);
         }

@@ -3,6 +3,7 @@ package com.example.SecretSpot.domain;
 import com.example.SecretSpot.domain.common.BaseCreatedEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "rankings")
@@ -10,7 +11,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Ranking extends BaseCreatedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +38,7 @@ public class Ranking extends BaseCreatedEntity {
     @Column(name = "review_point", nullable = false)
     @Builder.Default
     private Integer reviewPoint = 0;
-    
+
     @Column(name = "guide_rating_point", nullable = false)
     @Builder.Default
     private Integer guideRatingPoint = 0;
