@@ -36,8 +36,7 @@ public class UserService {
         Long userId = user.getId();
         Ranking ranking = rankingService.getMyRanking(user);
         return Map.of("profile_image", user.getProfileImageUrl(),
-                "name", user.getName(),
-                "nickname", UserUtils.getNicknameOrName(user),
+                "name", UserUtils.getNicknameOrName(user),
                 "keyword", userKeywordRepository.findByUserId(userId).stream()
                         .map(userKeyword -> userKeyword.getKeyword().getName()).collect(Collectors.toList()),
                 "ranking", rankingService.getMyRanking(user),
