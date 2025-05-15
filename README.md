@@ -1,4 +1,4 @@
-# S2 (Secret-Spot)
+# 💖 S2 (Secret-Spot)
 
 
 ### Info
@@ -11,8 +11,7 @@ S2 is a service designed to solve the increasingly discussed problem of **overto
 
 ---
 ## 📌 Tech Stack
-<img src="https://img.shields.io/badge/springboot-6DB33F?style=flat-square&logo=springboot&logoColor=white"/>
-<img src="https://img.shields.io/badge/springsecurity-6DB33F?style=flat-square&logo=springsecurity&logoColor=white"/>
+<img src="https://img.shields.io/badge/springboot-6DB33F?style=flat-square&logo=springboot&logoColor=white"/> <img src="https://img.shields.io/badge/springsecurity-6DB33F?style=flat-square&logo=springsecurity&logoColor=white"/>
 <img src="https://img.shields.io/badge/googlecloud-4285F4?style=flat-square&logo=googlecloud&logoColor=white"/>
 <img src="https://img.shields.io/badge/googlecloudstorage-AECBFA?style=flat-square&logo=googlecloudstorage&logoColor=white"/>
 <img src="https://img.shields.io/badge/mysql-4479A1?style=flat-square&logo=mysql&logoColor=white"/>
@@ -23,7 +22,7 @@ S2 is a service designed to solve the increasingly discussed problem of **overto
 + **Database:** MySQL
 + **Deployment Platform:** Google Cloud Platform
 
----
+
 ## 🧠 Key Features
 - **Etiquette tips and small-town suggestions for responsible travel**
 - **Ranking and Point system (mainly based on rarity of visited places)**
@@ -32,7 +31,7 @@ S2 is a service designed to solve the increasingly discussed problem of **overto
 - Review with Gemini-powered summarization
 
 
----
+
 ## 📂 Folder
 ```
 src/main/java/com/example/SecretSpot/
@@ -51,7 +50,7 @@ src/main/java/com/example/SecretSpot/
 ```
 
 ---
-## 👨‍💻 Members
+## 👨‍👩‍👧‍👦 Members
 ### Developer
 |FE & Designer|BE & PM|BE|AI|
 |:--:|:--:|:--:|:--:|
